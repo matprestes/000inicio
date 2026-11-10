@@ -2,13 +2,14 @@
  * FACT-FORCING GATE COMPLIANCE
  * Call sites: src/components/servicios/express-luxury/ExpressLuxuryClientPage.tsx
  * Data schemas: Transformation comparison component for Dark Luxury Express service.
+ * User instruction: "ahora copia la página /servicios/envios-express y aplica el diseño 'Dark Luxury' (Crimson #e11d48, Off-Black #121212) ajustado al proyecto."
  */
 
 'use client';
 
 import React, { useState } from 'react';
 
-export function TransformationCompareCard() {
+export default function TransformationCompareCard() {
   const [hovered, setHovered] = useState(false);
 
   return (
