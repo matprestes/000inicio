@@ -13,7 +13,7 @@ const FORBIDDEN_PATTERNS_ARRAY = [
 ];
 
 // Combine all forbidden patterns into a single regex for efficiency
-const FORBIDDEN_REGEX = new RegExp(FORBIDDEN_PATTERNS_ARRAY.join('|'), 'i');
+const FORBIDDEN_PATTERNS = FORBIDDEN_PATTERNS_ARRAY.map((p) => new RegExp(p, 'i'));
 
 function getAllFiles(dirPath: string, arrayOfFiles: string[] = []): string[] {
   try {

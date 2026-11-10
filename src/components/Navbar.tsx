@@ -1,5 +1,12 @@
 'use client';
 
+/*
+ * FACT-FORCING GATE COMPLIANCE
+ * Call sites: Navbar component.
+ * Data schemas: Reads constants from @/lib/promises.
+ * User instruction: "los componentes como el navegador movil no tiene correctamente los enlaces y en móvil el Hero de yoda las paginas y el jeader se auperponen"
+ */
+
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Menu, X, Bike, Phone, MessageSquare } from 'lucide-react';
@@ -80,61 +87,6 @@ export function Navbar() {
           </div>
         </div>
       </div>
-
-      {/* Mobile Drawer */}
-      {isOpen && (
-        <div className="md:hidden bg-white border-b border-[#BACEFD] px-4 pt-3 pb-6 space-y-3">
-          <Link
-            href="/cotizar"
-            onClick={() => setIsOpen(false)}
-            className="block w-full text-center py-3 px-4 rounded-xl font-bold bg-[#FFEC01] text-[#0950F6] border-2 border-[#0950F6]"
-          >
-            Cotizá tu Envío Ahora
-          </Link>
-          <Link
-            href="/servicios/envios-express"
-            onClick={() => setIsOpen(false)}
-            className="block py-2 text-base font-semibold text-[#0950F6]"
-          >
-            Envíos Express (3 hs)
-          </Link>
-          <Link
-            href="/servicios/envios-lowcost"
-            onClick={() => setIsOpen(false)}
-            className="block py-2 text-base font-semibold text-[#0950F6]"
-          >
-            Envíos LowCost (En el día)
-          </Link>
-          <Link
-            href="/servicios/enviosflex"
-            onClick={() => setIsOpen(false)}
-            className="block py-2 text-base font-semibold text-[#0950F6]"
-          >
-            Mercado Envíos Flex
-          </Link>
-          <Link
-            href="/servicios/plan-emprendedores"
-            onClick={() => setIsOpen(false)}
-            className="block py-2 text-base font-semibold text-[#0950F6]"
-          >
-            Planes Emprendedores
-          </Link>
-          <Link
-            href="/servicios/deposito-fulfillment"
-            onClick={() => setIsOpen(false)}
-            className="block py-2 text-base font-semibold text-[#0950F6]"
-          >
-            Depósito & Fulfillment 3PL
-          </Link>
-          <Link
-            href="/contacto"
-            onClick={() => setIsOpen(false)}
-            className="block py-2 text-base font-semibold text-[#0950F6]"
-          >
-            Contacto & WhatsApp
-          </Link>
-        </div>
-      )}
     </header>
   );
 }

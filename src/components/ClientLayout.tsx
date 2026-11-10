@@ -16,7 +16,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     <MotionConfig reducedMotion="user">
       <div className="relative w-full max-w-full min-h-screen flex flex-col overflow-x-hidden">
         <OptimizedHeader />
-        <main className="flex-1 w-full max-w-full overflow-x-hidden flex flex-col">{children}</main>
+        <main className="flex-1 w-full max-w-full overflow-x-hidden flex flex-col pt-20">{children}</main>
         <CarruselRedes />
         <OptimizedFooter />
         <MobileBottomNav />

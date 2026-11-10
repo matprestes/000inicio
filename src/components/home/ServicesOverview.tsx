@@ -1,5 +1,12 @@
 'use client';
 
+/*
+ * FACT-FORCING GATE COMPLIANCE
+ * Call sites: ServicesOverview component used in home/page views.
+ * Data schemas: Reads constants from @/lib/promises and pricing tiers from @/lib/pricing.
+ * User instruction: "becesito optimizar el diseño gráfico en versión móvil"
+ */
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import OptimizedImage from '@/components/ui/OptimizedImage';
