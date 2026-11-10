@@ -92,3 +92,5 @@ export function formatAssistantConversation(
   text += `Usuario: ${prompt}\nDosRuedas Bot:`;
   return text;
 }
+
+export const buildSystemPrompt = buildAssistantSystemPrompt;

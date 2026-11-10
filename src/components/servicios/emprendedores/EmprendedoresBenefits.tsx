@@ -15,7 +15,7 @@ export default function EmprendedoresBenefits() {
     },
     {
       title: 'Cuentas Corrientes',
-      desc: 'Esquemas ágiles de facturación mensual consolidada adaptados al flujo de caja financiero de tu negocio (no emitimos Factura A).',
+      desc: 'Esquemas ágiles de facturación mensual consolidada adaptados al flujo de caja financiero de tu negocio.',
       icon: Receipt,
     },
     {

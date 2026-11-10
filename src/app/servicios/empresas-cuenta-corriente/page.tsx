@@ -69,7 +69,7 @@ export default function EmpresasCuentaCorrientePage() {
 
             <div className="p-4 rounded-xl bg-brand-blue-50 border border-brand-blue-100 text-xs text-brand-blue-500/80 flex items-start gap-2">
               <AlertCircle className="w-4 h-4 text-brand-blue-500 shrink-0 mt-0.5" />
-              <span>Aclaración Impositiva: Operamos bajo régimen Monotributo emitiendo comprobantes oficiales legales. No emitimos Factura A.</span>
+              <span>Aclaración Impositiva: Operamos bajo régimen Monotributo emitiendo comprobantes oficiales legales (tipo C).</span>
             </div>
           </div>
 

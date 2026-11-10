@@ -4,7 +4,7 @@ import { Clock, FileSpreadsheet, Receipt, ShieldCheck } from 'lucide-react';
 const BENEFITS = [
   {
     title: 'Pagos Agrupados',
-    desc: 'Pagás todos los envíos juntos, por semana, quincena o mes, con el resumen de cada envío. No emitimos Factura A.',
+    desc: 'Pagás todos los envíos juntos, por semana, quincena o mes, con el resumen de cada envío.',
     icon: Receipt,
   },
   {

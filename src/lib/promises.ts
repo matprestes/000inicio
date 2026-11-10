@@ -165,3 +165,6 @@ export const OPERATING_HOURS = {
 // Canales de contacto oficiales unificados (BL-19)
 export const CONTACT_EMAIL = 'matiascejas@enviosdosruedas.com';
 export const SUPPORT_PHONE = '+54 223 660-2699';
+export const SUPPORT_WHATSAPP_LINK = 'https://wa.me/5492236602699';
+export const ADDRESS_DEPOSIT = 'Friuli 1972, Mar del Plata, Argentina';
+export const TAX_INVOICE_TYPE = 'Factura C';

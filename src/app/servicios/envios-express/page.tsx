@@ -226,7 +226,7 @@ export default function EnviosExpressPage() {
                   Régimen Fiscal & Facturación
                 </h4>
                 <p className="font-sans text-xs text-brand-blue-500/80 leading-relaxed">
-                  Operamos bajo Régimen Monotributo. Emitimos comprobantes fiscales legales tipo C. No emitimos Factura A.
+                  Operamos bajo Régimen Monotributo. Emitimos comprobantes fiscales legales tipo C.
                 </p>
               </div>
             </div>

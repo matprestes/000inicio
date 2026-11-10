@@ -3,8 +3,7 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 enum ServiceType {
@@ -30,6 +29,14 @@ model Feedback {
   createdAt     DateTime @default(now())
 }
 
+model Review {
+  id        Int      @id @default(autoincrement())
+  name      String
+  rating    Int
+  comment   String
+  createdAt DateTime @default(now())
+}
+
 model ImageMetadata {
   id                 Int                  @id @default(autoincrement())
   relativePath       String               @unique
@@ -46,5 +53,5 @@ model AiPromptSuggestion {
   aspectRatio String?
   imageId     Int
   image       ImageMetadata @relation(fields: [imageId], references: [id], onDelete: Cascade)
-  createdAt   DateTime      @default(now())
+  createdAt     DateTime      @default(now())
 }
