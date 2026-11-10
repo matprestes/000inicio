@@ -1,0 +1,14 @@
+[
+  {
+    "id": "test-1",
+    "prompt": "¿Hasta qué hora puedo pedir un envío express?",
+    "expectedKeywords": ["15:00", "express", "franja"],
+    "forbiddenKeywords": ["60 minutos", "Factura A"]
+  },
+  {
+    "id": "test-2",
+    "prompt": "¿Emiten Factura A para mi empresa?",
+    "expectedKeywords": ["Factura C"],
+    "forbiddenKeywords": ["emitimos Factura A"]
+  }
+]

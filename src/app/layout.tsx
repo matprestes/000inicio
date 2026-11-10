@@ -1,0 +1,293 @@
+import type { Metadata, Viewport } from 'next';
+import { Outfit, Anton, Bebas_Neue, Geist_Mono } from 'next/font/google';
+import Script from 'next/script';
+import './globals.css';
+import ClientLayout from '@/components/ClientLayout';
+import { CONTACT_EMAIL, SUPPORT_PHONE } from '@/lib/promises';
+
+const JSON_LD_PHONE = SUPPORT_PHONE.replace(/\s+/g, '-');
+
+const outfit = Outfit({
+  subsets: ['latin'],
+  variable: '--font-sans',
+  display: 'swap',
+  preload: true,
+  fallback: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+});
+
+const anton = Anton({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-display',
+  display: 'swap',
+  preload: true,
+  fallback: ['Impact', 'Haettenschweiler', 'Arial Black', 'sans-serif'],
+});
+
+const bebasNeue = Bebas_Neue({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-subheading',
+  display: 'swap',
+  preload: true,
+  fallback: ['Impact', 'Arial Narrow', 'sans-serif'],
+});
+
+const geistMono = Geist_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
+  display: 'swap',
+  preload: true,
+  fallback: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+});
+
+const baseUrl = 'https://www.enviosdosruedas.com';
+const AHREFS_ANALYTICS_KEY = 'NWj98c8Mm2KygtpCXcQh5w';
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#0950F6',
+};
+
+export const metadata: Metadata = {
+  metadataBase: new URL(baseUrl),
+  title: {
+    default: 'Mensajería en moto en Mar del Plata | Envíos DosRuedas',
+    template: '%s | Envíos DosRuedas',
+  },
+  description:
+    'Mensajería en moto y logística e-commerce en Mar del Plata. Envíos Express en franja de 3 hs, Mercado Envíos Flex en el día y reparto LowCost. Cotizá online.',
+  authors: [{ name: 'Envíos DosRuedas' }],
+  creator: 'Envíos DosRuedas',
+  publisher: 'Envíos DosRuedas',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'es_AR',
+    url: baseUrl,
+    siteName: 'Envíos DosRuedas',
+    title: 'Mensajería en moto en Mar del Plata | Envíos DosRuedas',
+    description:
+      'La solución logística y última milla de mayor confianza en Mar del Plata. Envíos Express, MercadoLibre Flex, ruteo eficiente y cadetería inteligente.',
+    images: [
+      {
+        url: `${baseUrl}/og-image.jpg`,
+        width: 1200,
+        height: 630,
+        alt: 'Envíos DosRuedas - Logística y Mensajería en Mar del Plata',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Mensajería en moto en Mar del Plata | Envíos DosRuedas',
+    description: 'La solución logística y última milla de mayor confianza en Mar del Plata.',
+    images: [`${baseUrl}/og-image.jpg`],
+    creator: '@enviosdosruedas',
+  },
+  verification: {
+    google: ['RKKz8Z6gsm6k3099W3s-xs7G6LTSQQNHpBs_iWfIQnM'],
+  },
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html
+      lang="es"
+      className={`${outfit.variable} ${anton.variable} ${bebasNeue.variable} ${geistMono.variable} scroll-smooth`}
+      data-scroll-behavior="smooth"
+      suppressHydrationWarning
+    >
+      <head>
+        <script
+          id="fetch-shim"
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                if (typeof window !== 'undefined') {
+                  var isSuppressed = function(msg, src) {
+                    var m = (typeof msg === 'string') ? msg : '';
+                    var s = (typeof src === 'string') ? src : '';
+                    return (
+                      m.indexOf('Cannot set property fetch') !== -1 ||
+                      m.indexOf('which has only a getter') !== -1 ||
+                      s.indexOf('chrome-extension://') !== -1
+                    );
+                  };
+
+                  window.addEventListener('error', function(e) {
+                    if (e && isSuppressed(e.message, e.filename)) {
+                      e.preventDefault();
+                      e.stopImmediatePropagation();
+                      return true;
+                    }
+                  }, true);
+
+                  var _oldOnError = window.onerror;
+                  window.onerror = function(msg, url, line, col, err) {
+                    var m = (typeof msg === 'string') ? msg : (err && err.message) || '';
+                    var s = (typeof url === 'string') ? url : '';
+                    if (isSuppressed(m, s)) {
+                      return true;
+                    }
+                    if (_oldOnError) return _oldOnError.apply(this, arguments);
+                  };
+
+                  window.addEventListener('unhandledrejection', function(e) {
+                    var reason = e && e.reason;
+                    var m = (reason && reason.message) || String(reason || '');
+                    if (isSuppressed(m, '')) {
+                      e.preventDefault();
+                    }
+                  });
+
+                  try {
+                    var origDef = Object.defineProperty;
+                    Object.defineProperty = function(obj, prop, desc) {
+                      if (prop === 'fetch' && desc && typeof desc === 'object') {
+                        if (desc.get && !desc.set) {
+                          var override;
+                          var origGet = desc.get;
+                          desc.set = function(v) { override = v; };
+                          desc.get = function() { return override !== undefined ? override : origGet.call(this); };
+                          desc.configurable = true;
+                        }
+                      }
+                      return origDef.call(Object, obj, prop, desc);
+                    };
+                  } catch (_) {}
+
+                  try {
+                    var _fetch = window.fetch;
+                    var fetchDesc = {
+                      configurable: true,
+                      enumerable: true,
+                      get: function() { return _fetch; },
+                      set: function(v) { _fetch = v; }
+                    };
+                    try { Object.defineProperty(window, 'fetch', fetchDesc); } catch (_) {}
+                    if (typeof Window !== 'undefined' && Window.prototype) {
+                      try { Object.defineProperty(Window.prototype, 'fetch', fetchDesc); } catch (_) {}
+                    }
+                  } catch (_) {}
+                }
+              })();
+            `,
+          }}
+        />
+        <link rel="preconnect" href="https://www.googletagmanager.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://analytics.ahrefs.com" />
+        <link rel="dns-prefetch" href="https://api.whatsapp.com" />
+        <link rel="dns-prefetch" href="https://web.whatsapp.com" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(
+              {
+                '@context': 'https://schema.org',
+                '@graph': [
+                  {
+                    '@type': 'Organization',
+                    name: 'Envíos DosRuedas',
+                    url: baseUrl,
+                    logo: `${baseUrl}/logo-envios-simplified.webp`,
+                    sameAs: [
+                      'https://www.instagram.com/enviosdosruedas/',
+                      'https://www.facebook.com/enviosdosruedas/',
+                    ],
+                    contactPoint: {
+                      '@type': 'ContactPoint',
+                      telephone: JSON_LD_PHONE,
+                      contactType: 'customer service',
+                      availableLanguage: 'Spanish',
+                      areaServed: 'AR',
+                    },
+                  },
+                  {
+                    '@type': 'LocalBusiness',
+                    '@id': `${baseUrl}#localbusiness`,
+                    name: 'Envíos DosRuedas',
+                    description:
+                      'Mensajería y logística e-commerce en Mar del Plata. Envíos Express en franja de 3 hs a elección, LowCost, Mercado Envíos Flex y almacenamiento en Friuli 1972.',
+                    url: baseUrl,
+                    telephone: JSON_LD_PHONE,
+                    email: CONTACT_EMAIL,
+                    image: `${baseUrl}/og-image.jpg`,
+                    hasMap: 'https://www.google.com/maps?q=Friuli+1972,+Mar+del+Plata',
+                    address: {
+                      '@type': 'PostalAddress',
+                      streetAddress: 'Friuli 1972',
+                      addressLocality: 'Mar del Plata',
+                      addressRegion: 'Buenos Aires',
+                      postalCode: '7600',
+                      addressCountry: 'AR',
+                    },
+                    geo: {
+                      '@type': 'GeoCoordinates',
+                      latitude: -38.0055,
+                      longitude: -57.5426,
+                    },
+                    openingHoursSpecification: [
+                      {
+                        '@type': 'OpeningHoursSpecification',
+                        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+                        opens: '09:00',
+                        closes: '18:00',
+                      },
+                      {
+                        '@type': 'OpeningHoursSpecification',
+                        dayOfWeek: ['Saturday'],
+                        opens: '10:00',
+                        closes: '15:00',
+                      },
+                    ],
+                    areaServed: { '@type': 'City', name: 'Mar del Plata' },
+                    priceRange: '$$',
+                    currenciesAccepted: 'ARS',
+                    paymentAccepted: 'Cash, Credit Card, Transfer, MercadoPago',
+                  },
+                ],
+              },
+              null,
+              2
+            ),
+          }}
+        />
+        <Script src="https://www.googletagmanager.com/gtag/js?id=AW-17510443994" strategy="lazyOnload" />
+        <Script id="google-tag-init" strategy="lazyOnload">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'AW-17510443994');
+            gtag('config', 'G-LSLQ3RJ8WT');
+          `}
+        </Script>
+        {process.env.NODE_ENV === 'production' && (
+          <Script
+            src="https://analytics.ahrefs.com/analytics.js"
+            data-key={AHREFS_ANALYTICS_KEY}
+            strategy="lazyOnload"
+          />
+        )}
+      </head>
+      <body
+        className="bg-brand-white text-brand-ink font-sans antialiased selection:bg-brand-yellow selection:text-brand-blue min-h-dvh flex flex-col"
+        suppressHydrationWarning
+      >
+        <ClientLayout>{children}</ClientLayout>
+      </body>
+    </html>
+  );
+}

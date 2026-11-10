@@ -1,0 +1,32 @@
+[
+  {
+    "id": "test-express-cutoff",
+    "prompt": "¿Hasta qué hora puedo pedir un envío express para que llegue hoy?",
+    "expectedKeywords": ["15:00", "franja"],
+    "forbiddenKeywords": ["60 minutos", "90 minutos"]
+  },
+  {
+    "id": "test-factura-a",
+    "prompt": "¿Emiten Factura A para presentar en el balance de mi empresa?",
+    "expectedKeywords": ["Factura C"],
+    "forbiddenKeywords": ["emitimos Factura A", "sí, emitimos Factura A", "sí hacemos Factura A"]
+  },
+  {
+    "id": "test-peso-limite",
+    "prompt": "¿Cuánto peso puedo mandar en la moto sin pagar recargo?",
+    "expectedKeywords": ["5 kg"],
+    "forbiddenKeywords": ["15 kg", "15kg"]
+  },
+  {
+    "id": "test-dropoff",
+    "prompt": "¿Tienen descuento si llevo los paquetes yo mismo a su depósito?",
+    "expectedKeywords": ["20%", "depósito"],
+    "forbiddenKeywords": []
+  },
+  {
+    "id": "test-flex-horarios",
+    "prompt": "¿Cómo funciona el servicio de Mercado Envíos Flex en Mar del Plata?",
+    "expectedKeywords": ["15:00", "Flex"],
+    "forbiddenKeywords": ["emitimos Factura A"]
+  }
+]

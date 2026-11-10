@@ -1,0 +1,16 @@
+# Envíos DosRuedas (Mar del Plata)
+> Logística urbana en moto para comercios, e-commerce y particulares en Mar del Plata (MDQ), Argentina.
+
+## Servicios Principales
+- Envíos Express: Franja horaria de 3 hs. Corte de solicitud a las 15:00 hs para entrega en el día (requiere 2 hs de anticipación).
+- Envíos LowCost: Reparto en el día entregando antes de las 19:00 hs. Corte a las 13:00 hs.
+- Mercado Envíos Flex MDQ: Nivel 2 $6500, Nivel 3 $4500 plano a todo Mar del Plata. Corte 15:00 hs, entrega hasta 20:00 hs.
+- Depósito 3PL & Fulfillment: Friuli 1972, Mar del Plata. Stock gratis, picking QR y Same Day.
+- Descuento DropOFF: 20% de ahorro directo si entregás tus paquetes preparados en Friuli 1972.
+
+## Parámetros Operativos
+- Peso estándar: hasta 5 kg sin recargo. Dimensiones estándar: 40 × 40 × 30 cm.
+- Tolerancia de espera en puerta: 10 minutos bonificados; luego $2200 por cada bloque de 10 min.
+- Recargo por lluvia: 30%.
+- Facturación: Emisión exclusiva de Factura C. No se emite Factura A.
+- Contacto: +54 223 660-2699 · matiascejas@enviosdosruedas.com

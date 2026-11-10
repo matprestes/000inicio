@@ -1,0 +1,167 @@
+export const EXPRESS_WINDOW = 'franja horaria de 3 hs';
+export const EXPRESS_WINDOW_SHORT = 'Franja de 3 hs';
+
+// Anticipación mínima para coordinar una franja de Express.
+export const EXPRESS_LEAD_TIME = '2 hs de anticipación';
+
+// Corte Express: pedido hasta esta hora para entregar en el día. El último rango
+// posible es 17 a 19 hs (entrevista 2026-09-28 §1.1).
+export const EXPRESS_CUTOFF_TIME = '15:00 hs';
+
+// Ventanas operativas LowCost
+export const LOWCOST_CUTOFF_TIME = '13:00 hs';
+export const LOWCOST_DELIVERY_DEADLINE = '19:00 hs';
+
+// Mercado Envíos Flex
+export const FLEX_CUTOFF_TIME = '15:00 hs';
+export const FLEX_DELIVERY_DEADLINE = '20:00 hs';
+
+// Tarifas fijas de los niveles Flex. Fuera de `PriceRange`: son precio cerrado
+// por nivel, no un rango por distancia. El Nivel 1 no tiene cifra propia —cobra
+// la tabla LowCost por zona (ver `LOW_COST_TIERS` en `pricing.ts`).
+export const FLEX_NIVEL_2_PRICE = 6500; // Tope fijo en Z4 y Z5
+export const FLEX_NIVEL_3_PRICE = 4500; // Tarifa plana a todo Mar del Plata
+
+// Recargo por lluvia. El dueño (entrevista 2026-09-28) define un rango según el
+// servicio: 50 % para Express y LowCost, 30 % en todos los demás. Esta constante
+// modela SOLO el caso de 30 %, que es el único que hoy se muestra en el sitio.
+// Antes de usar este valor para Express o LowCost, agregar el desglose por servicio.
+// Ver docs/knowledge_base/00-negocio/tarifas.md §7.
+export const RAIN_SURCHARGE_PERCENT = 30;
+
+// Recargo por lluvia para Express y LowCost (el caso de 50 % del rango del dueño).
+export const RAIN_SURCHARGE_PERCENT_EXPRESS_LOWCOST = 50;
+
+// Recargos operativos de Express y LowCost (entrevista 2026-09-28 §3). Se informan
+// en el cotizador pero no entran en el cálculo automático: dependen de lo que pase
+// en el viaje (lluvia, espera, paradas, destinatario ausente).
+export const WAIT_TOLERANCE_MIN = 10; // Espera en puerta sin cargo
+export const WAIT_CHARGE_ARS = 2200; // Por cada bloque de espera, desde el minuto 11 (corrección dueño oct 2026)
+export const WAIT_CHARGE_BLOCK_MIN = 10;
+export const EXTRA_STOP_SURCHARGE_PERCENT = 50; // Por parada intermedia sobre la ruta
+export const EXTRA_STOP_MAX_DETOUR_KM = 2; // Más desvío que esto es un envío aparte
+export const RETRY_CHARGE_PERCENT = 100; // Segunda visita por destinatario ausente
+
+// Periferia: destinos fuera de la urbana de Mar del Plata (Batán, Sierra de los
+// Padres…). NO es el excedente de 10 a 20 km de `pricing.ts` ($1.000 / $700 por km):
+// es otra tarifa, por km de ruta, que se cotiza aparte. Ver entrevista §3.1.
+export const PERIPHERY_PRICE_PER_KM = 1000;
+// Bulto extra: más de 5 kg o 40 × 40 × 30 cm. Corrección dueño octubre 2026: desde $1800.
+export const BULK_EXTRA_FROM_ARS = 1800;
+
+// Umbrales de distancia y límites físicos
+export const CONSULT_THRESHOLD_KM = 20; // Hasta 20 km cálculo automático; > 20 km "A consultar"
+
+// Capacidad por bulto. UN umbral, dos formas de expresarlo:
+//   STANDARD_WEIGHT_KG            → lo que entra sin recargo. Es el único número de
+//                                   peso que va al copy y a las tarjetas de servicio.
+//   STANDARD_BULLET_DIMENSIONS_CM → el mismo umbral en volumen.
+//
+// Sobrepasado el umbral, el bulto se coordina aparte y entra un recargo desde
+// `BULK_EXTRA_FROM_ARS`, cuyo monto final depende del servicio. No entra en el
+// cálculo automático del cotizador.
+//
+// SIN TECHO NUMÉRICO PUBLICADO, y es deliberado (decisión del dueño 2026-09-30).
+// Existió una constante `MAX_WEIGHT_KG = 15` que ningún fuente del dueño respalda:
+// el 15 kg venía solo del `.docx`, siempre como pregunta sin respuesta registrada
+// o como aserción del propio `.docx` — la misma clase de número viejo que el
+// dueño ya corrigió ahí ("60-90 min: ESTO ES FALSO"). Lo que el dueño sí
+// respondió, textual, fue "todo lo que pueda ser llevado en moto" (CSV pregunta
+// 4), sin cifra. Publicar un techo inventado además rompía el recargo por bulto
+// extra: si el máximo fuera 5 kg, "más de 5 kg suma $1.800" sería imposible.
+// Constante eliminada; el guard de `src/lib/copy-guard.test.ts` la bloquea.
+export const STANDARD_WEIGHT_KG = 5;
+export const STANDARD_BULLET_DIMENSIONS_CM = '40 × 40 × 30 cm';
+
+// Condiciones comerciales Depósito & Fulfillment (servicio para empresas)
+// No figuran en la tabla `PriceRange` ni en docs/contexto/precios.md: son tarifas
+// cerradas definidas por el dueño. El 20 % de DropOFF quedó confirmado en el relevamiento
+// del 2026-09-29; SAME_DAY_FIXED_PRICE se suma ese mismo día.
+export const DROPOFF_DISCOUNT_PERCENT = 20; // Descuento por traer envíos listos al depósito
+export const CONTRAREEMBOLSO_COMMISSION_PERCENT = 0; // Sin extra ni comisión por cobro en entrega
+
+// Tarifa fija del plan E-Commerce Same Day para toda la ciudad. Fuera de `PriceRange`
+// a propósito: es un precio cerrado por servicio, no un rango por distancia.
+export const SAME_DAY_FIXED_PRICE = 6000;
+
+// Tarifa fija E-Commerce 24HS (Next Day) — Confirmada por Matías 2026-09-29.
+// Recolección gratis desde 10 envíos. DropOFF -20% solo en este servicio.
+export const ECOMMERCE_24HS_PRICE = 3800;
+
+/** Envíos/mes desde los cuales el retiro es gratis. */
+export const ECOMMERCE_24HS_FREE_PICKUP_THRESHOLD = 10;
+
+/**
+ * Escala de planes E-Commerce 24HS. Vivían como literales dentro de
+ * `Ecommerce24HSPricing.tsx`; se movieron acá para que haya una sola fuente,
+ * como manda AGENTS.md.
+ *
+ * Procedencia: `Inicial` es `ECOMMERCE_24HS_PRICE`, confirmado de palabra por el
+ * dueño el 2026-09-29. `Pro`, `Elite` y `Partner` salen de la escala que el
+ * sitio ya publica; no hay confirmación verbal registrada para esos tres.
+ * Si el dueño ajusta la escala, se corrige acá y en ningún otro lado.
+ */
+export const ECOMMERCE_24HS_PLANS = [
+  { name: 'Inicial', fromEnvos: 1, toEnvios: 199, price: ECOMMERCE_24HS_PRICE, featured: false },
+  { name: 'Pro', fromEnvos: 200, toEnvios: 1199, price: 3500, featured: true },
+  { name: 'Elite', fromEnvos: 1200, toEnvios: 1999, price: 3200, featured: false },
+  { name: 'Partner', fromEnvos: 2000, toEnvios: null, price: 3000, featured: false },
+] as const;
+
+/**
+ * Planes de la landing de Emprendedores. Tarifas cerradas por plan, fuera de
+ * `PriceRange`. El Plan Inicial DropOFF ya viene con el -20% aplicado sobre la
+ * tarifa plana; el Plan PyME Corporativo no tiene cifra: se cotiza.
+ */
+export const EMPRENDEDORES_PLANS = [
+  {
+    name: 'Plan Inicial DropOFF',
+    distance: 'Por envío en MDQ',
+    price: 2400, // Tarifa base del Plan DropOFF. La consume también `DropoffCalculator`.
+    period: '/ envío',
+    tag: `DropOFF -${DROPOFF_DISCOUNT_PERCENT}%`,
+    note: 'Traés tus paquetes listos a Friuli 1972 y el descuento se aplica solo.',
+    featured: false,
+  },
+  {
+    name: 'Plan E-Commerce 3PL',
+    distance: 'Stock gratis',
+    price: 3000,
+    period: '/ envío + stock gratis',
+    tag: 'Con depósito',
+    note: 'Stock gratis en Friuli 1972 + picking QR + Same Day.',
+    featured: true,
+  },
+  {
+    name: 'Plan PyME Corporativo',
+    distance: 'Volumen > 10 envíos/día',
+    price: null,
+    period: '',
+    tag: 'Cuenta corriente',
+    note: 'Para empresas con envíos diarios recurrentes. La tarifa se cotiza.',
+    featured: false,
+  },
+] as const;
+
+// Reglas de 2da visita / reintento por servicio (corrección dueño octubre 2026)
+export const RETRY_RULES = {
+  EXPRESS: { type: 'NEW_TRIP', description: 'Se cobra como viaje nuevo' },
+  LOW_COST: { type: 'NEW_TRIP', description: 'Se cobra como viaje nuevo' },
+  FLEX_NIVEL_1: { type: 'PERCENT', value: 50, description: '50% en todas las zonas' },
+  FLEX_NIVEL_2: { type: 'ZONE_BASED', z1: 0, z2_to_z5: 50, description: 'Z1 gratis, Z2-Z5 50%' },
+  FLEX_NIVEL_3: { type: 'FREE', description: '100% bonificada todas zonas' },
+  DEPOSITO_3PL: { type: 'FREE', description: '100% bonificada' },
+  ECOMMERCE_24HS: { type: 'FREE', description: '100% bonificada' },
+  CUENTA_CORRIENTE: { type: 'PERCENT', value: 50, description: '50% del valor original' },
+} as const;
+
+// Horarios de atención oficiales en base central Friuli 1972 (Decisión 5 aprobada)
+export const OPERATING_HOURS = {
+  weekdays: '09:00 a 18:00 hs',
+  saturdays: '10:00 a 15:00 hs',
+  sundays: 'Cerrado',
+} as const;
+
+// Canales de contacto oficiales unificados (BL-19)
+export const CONTACT_EMAIL = 'matiascejas@enviosdosruedas.com';
+export const SUPPORT_PHONE = '+54 223 660-2699';

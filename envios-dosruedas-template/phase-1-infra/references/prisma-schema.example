@@ -1,0 +1,50 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider        = "prisma-client"
+  output          = "../generated/prisma"
+}
+
+enum ServiceType {
+  LOW_COST
+  EXPRESS
+}
+
+model PriceRange {
+  id             Int         @id @default(autoincrement())
+  serviceType    ServiceType
+  distanciaMinKm Float
+  distanciaMaxKm Float
+  precioRango    Float
+  descripcion    String
+}
+
+model Feedback {
+  id            Int      @id @default(autoincrement())
+  page          String
+  componentPath String
+  currentText   String
+  suggestedEdit String
+  createdAt     DateTime @default(now())
+}
+
+model ImageMetadata {
+  id                 Int                  @id @default(autoincrement())
+  relativePath       String               @unique
+  currentDescription String
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  promptSuggestions  AiPromptSuggestion[]
+}
+
+model AiPromptSuggestion {
+  id          Int           @id @default(autoincrement())
+  promptText  String
+  modelUsed   String?
+  aspectRatio String?
+  imageId     Int
+  image       ImageMetadata @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  createdAt   DateTime      @default(now())
+}

@@ -1,0 +1,844 @@
+'use client';
+
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import OptimizedImage from '@/components/ui/OptimizedImage';
+import { ChevronLeft, ChevronRight, Zap, Package, Truck, Warehouse, Info, X, MapPin, ShieldCheck } from 'lucide-react';
+import {
+  DROPOFF_DISCOUNT_PERCENT,
+  EXPRESS_LEAD_TIME,
+  EXPRESS_WINDOW_SHORT,
+  FLEX_CUTOFF_TIME,
+  FLEX_DELIVERY_DEADLINE,
+  LOWCOST_CUTOFF_TIME,
+  LOWCOST_DELIVERY_DEADLINE,
+  SAME_DAY_FIXED_PRICE,
+  STANDARD_WEIGHT_KG,
+} from '@/lib/promises';
+import { EXPRESS_TIERS, LOW_COST_TIERS } from '@/lib/pricing';
+import { trackAnalytics } from '@/lib/analytics';
+import NetworkCanvasWrapper from '@/components/home/NetworkCanvasWrapper';
+
+const formatArs = (value: number) => `$${value.toLocaleString('es-AR')}`;
+
+interface ServiceDetails {
+  summary: string;
+  features: string[];
+  ctaText: string;
+  ctaHref: string;
+}
+
+interface ServiceStats {
+  time: string;
+  price: string;
+  weight: string;
+}
+
+interface ServiceItem {
+  id: string;
+  title: string;
+  description: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  badge: string;
+  city: string;
+  founded: string;
+  imageUrl: string;
+  cardStyleCenter: string;
+  cardStyleSide: string;
+  textColor: string;
+  titleColor: string;
+  descColor: string;
+  imgBlend: string;
+  badgeStyle: string;
+  iconBoxStyle: string;
+  statBoxStyle: string;
+  statValStyle: string;
+  statLabelStyle: string;
+  hintColor: string;
+  stats: ServiceStats;
+  details: ServiceDetails;
+}
+
+export default function ServicesOverview() {
+  const reduceMotion = useReducedMotion();
+  const [activeIndex, setActiveIndex] = useState<number>(0);
+  const [selectedService, setSelectedService] = useState<ServiceItem | null>(null);
+  const [isAutoRotate, setIsAutoRotate] = useState<boolean>(true);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
+  const [isSmallScreen, setIsSmallScreen] = useState<boolean>(false);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const lastTriggerRef = useRef<HTMLButtonElement | null>(null);
+
+  const closeModal = useCallback(() => {
+    setSelectedService(null);
+  }, []);
+
+  // Bloquear scroll del body, gestionar foco (inicial, trampa y retorno) y cerrar con Escape mientras el modal está abierto
+  useEffect(() => {
+    if (!selectedService) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const focusTimer = setTimeout(() => {
+      closeButtonRef.current?.focus();
+    }, 50);
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeModal();
+        return;
+      }
+      if (e.key === 'Tab' && modalRef.current) {
+        const focusable = modalRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    const triggerEl = lastTriggerRef.current;
+
+    return () => {
+      clearTimeout(focusTimer);
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', onKeyDown);
+      triggerEl?.focus();
+    };
+  }, [selectedService, closeModal]);
+
+  // Snappy spring configs
+  const springConfigSnappy = { type: 'spring' as const, stiffness: 300, damping: 25 };
+  const springConfigCarousel = { type: 'spring' as const, stiffness: 140, damping: 22 };
+
+  const services: ServiceItem[] = [
+    {
+      id: 'express',
+      title: 'Envíos Express',
+      description: 'Mensajería en moto con franja horaria de 3 hs a elección.',
+      href: '/servicios/envios-express',
+      icon: Zap,
+      badge: 'URGENTE',
+      city: 'Todo Mar del Plata',
+      founded: '+7 Años de Trayectoria',
+      imageUrl: '/elementos/envios_express.webp',
+      cardStyleCenter: 'border-brand-yellow-500 bg-gradient-to-br from-[#0950F6] via-[#0840C8] to-[#052885] shadow-[0_16px_40px_rgba(9,80,246,0.6)] text-white',
+      cardStyleSide: 'border-[#0950F6]/40 bg-[#0950F6]/90 text-white/90 shadow-md',
+      textColor: 'text-white',
+      titleColor: 'text-white group-hover:text-brand-yellow-400',
+      descColor: 'text-brand-blue-50',
+      imgBlend: 'opacity-30 mix-blend-overlay',
+      badgeStyle: 'bg-brand-yellow-500 text-brand-blue-900 border-brand-yellow-400 font-extrabold shadow-sm',
+      iconBoxStyle: 'bg-brand-yellow-500 text-brand-blue-900 shadow-md',
+      statBoxStyle: 'bg-white/10 border border-white/15 text-white',
+      statValStyle: 'text-brand-yellow-400',
+      statLabelStyle: 'text-brand-blue-50',
+      hintColor: 'text-brand-yellow-400 font-bold',
+      stats: {
+        time: EXPRESS_WINDOW_SHORT,
+        price: `${formatArs(EXPRESS_TIERS[0].price)} Base`,
+        weight: `Hasta ${STANDARD_WEIGHT_KG} kg`,
+      },
+      details: {
+        summary: `Servicio de mensajería urbana con horario a elección, ideal para trámites urgentes, despacho de encomiendas y entrega de documentación. Coordinás la franja horaria que te conviene y se asigna un repartidor exclusivo para tu envío.`,
+        features: [
+          `Tarifa base de ${formatArs(EXPRESS_TIERS[0].price)} hasta ${EXPRESS_TIERS[0].maxKm} km.`,
+          `Entrega en franja de 3 hs a elección, pedido con ${EXPRESS_LEAD_TIME} mínima.`,
+          'Notificación automática de entrega por WhatsApp.'
+        ],
+        ctaText: 'COTIZÁ TU EXPRESS',
+        ctaHref: '/cotizar'
+      }
+    },
+    {
+      id: 'lowcost',
+      title: 'Envíos LowCost',
+      description: 'Envíos económicos programados en el día, sin elección de horario.',
+      href: '/servicios/envios-lowcost',
+      icon: Package,
+      badge: 'ECONÓMICO',
+      city: 'Todo Gral. Pueyrredón',
+      founded: 'Tarifa Fija Especial',
+      imageUrl: '/elementos/envios_lowcost.webp',
+      cardStyleCenter: 'border-[#2ECC85] bg-gradient-to-br from-[#032E1F] via-[#054831] to-[#021A12] shadow-[0_16px_40px_rgba(46,204,133,0.45)] text-white',
+      cardStyleSide: 'border-[#2ECC85]/40 bg-[#032E1F]/90 text-white/90 shadow-md',
+      textColor: 'text-white',
+      titleColor: 'text-white group-hover:text-[#2ECC85]',
+      descColor: 'text-[#FAFCFB]/85',
+      imgBlend: 'opacity-25 mix-blend-overlay',
+      badgeStyle: 'bg-[#2ECC85] text-[#031811] border-[#2ECC85] font-extrabold shadow-sm',
+      iconBoxStyle: 'bg-[#2ECC85] text-[#031811] shadow-md',
+      statBoxStyle: 'bg-[#2ECC85]/15 border border-[#2ECC85]/25 text-[#2ECC85]',
+      statValStyle: 'text-[#2ECC85]',
+      statLabelStyle: 'text-[#FAFCFB]/70',
+      hintColor: 'text-[#2ECC85] font-bold',
+      stats: {
+        time: 'En el día',
+        price: `${formatArs(LOW_COST_TIERS[0].price)} Base`,
+        weight: `Hasta ${STANDARD_WEIGHT_KG} kg`,
+      },
+      details: {
+        summary: 'La alternativa ideal para comercios y e-commerce que buscan optimizar costos de envío. Es un reparto económico programado para el día, no un agrupamiento de tus propios envíos: lo pedís antes del corte y se entrega a lo largo de la jornada.',
+        features: [
+          `Tarifa base de ${formatArs(LOW_COST_TIERS[0].price)} hasta ${LOW_COST_TIERS[0].maxKm} km.`,
+          `Pedí antes de las ${LOWCOST_CUTOFF_TIME} y se entrega antes de las ${LOWCOST_DELIVERY_DEADLINE}.`,
+          'Sin elección de franja horaria: la tarifa más baja de la ciudad.'
+        ],
+        ctaText: 'PROBÁ EL LOWCOST',
+        ctaHref: '/cotizar'
+      }
+    },
+    {
+      id: 'flex',
+      title: 'Envíos Flex',
+      description: 'Entregas en el día integradas para tus ventas de MercadoLibre.',
+      href: '/servicios/enviosflex',
+      icon: Truck,
+      badge: 'MERCADOLIBRE FLEX',
+      city: 'Mar del Plata urbana',
+      founded: `Corte extendido ${FLEX_CUTOFF_TIME}`,
+      imageUrl: '/elementos/envios_flex.webp',
+      cardStyleCenter: 'border-brand-blue-600 bg-gradient-to-br from-[#FFEC01] via-[#F3BB0A] to-[#D89B00] shadow-[0_16px_40px_rgba(255,236,1,0.5)] text-brand-blue-950',
+      cardStyleSide: 'border-[#FFEC01]/50 bg-[#FFEC01]/95 text-brand-blue-950 shadow-md',
+      textColor: 'text-brand-blue-950',
+      titleColor: 'text-brand-blue-950 group-hover:text-brand-blue-700',
+      descColor: 'text-brand-blue-950 font-medium',
+      imgBlend: 'opacity-20 mix-blend-multiply',
+      badgeStyle: 'bg-brand-blue-500 text-white border-brand-blue-600 font-extrabold shadow-sm',
+      iconBoxStyle: 'bg-brand-blue-500 text-white shadow-md',
+      statBoxStyle: 'bg-brand-blue-500/15 border border-brand-blue-500/25 text-brand-blue-950 font-bold',
+      statValStyle: 'text-brand-blue-950',
+      statLabelStyle: 'text-brand-blue-900',
+      hintColor: 'text-brand-blue-950 font-bold',
+      stats: {
+        time: 'En el día',
+        price: 'Zonificado LowCost',
+        weight: 'Moto / Auto',
+      },
+      details: {
+        summary: 'Habilitá Envíos Flex en tu cuenta de MercadoLibre y despachá todas tus ventas en el mismo día. Mejorá tu reputación y convertite en vendedor destacado con recolección gratuita.',
+        features: [
+          'Visitas bonificadas según tu volumen diario de entregas.',
+          `Reparto coordinado antes de las ${FLEX_DELIVERY_DEADLINE}.`,
+          'Recolección a domicilio sin cargo extra por nuestro equipo.'
+        ],
+        ctaText: 'CONFIGURÁ FLEX',
+        ctaHref: '/servicios/enviosflex'
+      }
+    },
+    {
+      id: '3pl',
+      title: 'E-Commerce Same Day',
+      description: 'Guardamos tu stock y lo despachamos el mismo día en Friuli 1972.',
+      href: '/servicios/deposito-fulfillment',
+      icon: Warehouse,
+      badge: 'E-COMMERCE 3PL',
+      city: 'Depósito Friuli 1972',
+      founded: 'Stock guardado',
+      imageUrl: '/elementos/envios_emprendedores.webp',
+      cardStyleCenter: 'border-[#00D2FF] bg-gradient-to-br from-[#0A162B] via-[#102242] to-[#050C19] shadow-[0_16px_40px_rgba(0,210,255,0.4)] text-white',
+      cardStyleSide: 'border-[#00D2FF]/40 bg-[#0A162B]/90 text-white/90 shadow-md',
+      textColor: 'text-white',
+      titleColor: 'text-white group-hover:text-[#00D2FF]',
+      descColor: 'text-slate-200/90',
+      imgBlend: 'opacity-25 mix-blend-overlay',
+      badgeStyle: 'bg-[#00D2FF] text-[#081224] border-[#00D2FF] font-extrabold shadow-sm',
+      iconBoxStyle: 'bg-[#00D2FF] text-[#081224] shadow-md',
+      statBoxStyle: 'bg-[#00D2FF]/15 border border-[#00D2FF]/25 text-[#00D2FF]',
+      statValStyle: 'text-[#00D2FF]',
+      statLabelStyle: 'text-slate-300',
+      hintColor: 'text-[#00D2FF] font-bold',
+      stats: {
+        time: 'Same Day / 24 hs',
+        price: `${formatArs(SAME_DAY_FIXED_PRICE)} fijo`,
+        weight: 'Sin límite',
+      },
+      details: {
+        summary: 'Almacená tus productos en nuestro depósito central de Friuli 1972 y olvidate del empaque y los despachos. Nosotros nos encargamos de todo el proceso logístico para que te dediques a vender.',
+        features: [
+          `E-Commerce Same Day con tarifa fija de ${formatArs(SAME_DAY_FIXED_PRICE)} a toda la ciudad.`,
+          `E-Commerce 24HS con ${DROPOFF_DISCOUNT_PERCENT}% OFF si traés los envíos listos (DropOFF).`,
+          'Control de stock digital por sistema QR/barras y picking con embalaje profesional.'
+        ],
+        ctaText: 'CONSULTÁ PLANES',
+        ctaHref: '/servicios/deposito-fulfillment'
+      }
+    },
+  ];
+
+  const total = services.length;
+  const autoRotateIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Handle resize
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 640);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Auto-rotation with deterministic timing (respects manual pause via toggle and temporary pause on hover)
+  useEffect(() => {
+    if (!isAutoRotate || isHovered || reduceMotion || selectedService) {
+      if (autoRotateIntervalRef.current) {
+        clearInterval(autoRotateIntervalRef.current);
+        autoRotateIntervalRef.current = null;
+      }
+      return;
+    }
+
+    autoRotateIntervalRef.current = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % total);
+    }, 4500);
+
+    return () => {
+      if (autoRotateIntervalRef.current) {
+        clearInterval(autoRotateIntervalRef.current);
+        autoRotateIntervalRef.current = null;
+      }
+    };
+  }, [isAutoRotate, isHovered, total, reduceMotion, selectedService]);
+
+  const handlePrev = useCallback(() => {
+    setIsAutoRotate(false);
+    setActiveIndex((prev) => (prev - 1 + total) % total);
+  }, [total]);
+
+  const handleNext = useCallback(() => {
+    setIsAutoRotate(false);
+    setActiveIndex((prev) => (prev + 1) % total);
+  }, [total]);
+
+  // Navegación por teclado restringida al foco interno del carrusel
+  const handleCarouselKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (selectedService) return;
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        handlePrev();
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        handleNext();
+      }
+    },
+    [handlePrev, handleNext, selectedService]
+  );
+
+  // Touch gesture support for mobile carousel swiping
+  const touchStartXRef = useRef<number>(0);
+  const touchEndXRef = useRef<number>(0);
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    touchStartXRef.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    touchEndXRef.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStartXRef.current || !touchEndXRef.current) return;
+    const distance = touchStartXRef.current - touchEndXRef.current;
+    const minSwipeDistance = 40;
+
+    if (distance > minSwipeDistance) {
+      handleNext();
+    } else if (distance < -minSwipeDistance) {
+      handlePrev();
+    }
+
+    touchStartXRef.current = 0;
+    touchEndXRef.current = 0;
+  };
+
+  // Calculate card transforms using spring-based derived values
+  const getCardTransform = (index: number) => {
+    const offset = ((((index - activeIndex + total / 2) % total) + total) % total) - Math.floor(total / 2);
+    const absOffset = Math.abs(offset);
+    const isCenter = offset === 0;
+
+    if (reduceMotion) {
+      return {
+        offset,
+        isCenter,
+        rotateY: 0,
+        translateZ: 0,
+        translateX: 0,
+        opacity: isCenter ? 1 : 0,
+        scale: isCenter ? 1 : 0.7,
+        zIndex: isCenter ? total : total - absOffset,
+      };
+    }
+
+    const rotateY = isSmallScreen ? 0 : offset * -28;
+    const translateZ = isSmallScreen ? 0 : isCenter ? 120 : -absOffset * 180;
+    const translateX = offset * (isSmallScreen ? 115 : 260);
+    const opacity = isCenter ? 1 : Math.max(0.15, 1 - absOffset * 0.4);
+    const scale = isCenter ? (isSmallScreen ? 1.02 : 1.05) : Math.max(0.65, 1 - absOffset * 0.18);
+
+    return { offset, isCenter, rotateY, translateZ, translateX, opacity, scale, zIndex: total - absOffset };
+  };
+
+  return (
+    <section
+      id="services-overview"
+      aria-labelledby="services-overview-title"
+      className="py-16 sm:py-20 lg:py-24 bg-brand-blue text-white relative overflow-hidden perspective-[2000px]"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {/* Red logística interactiva en canvas (fondo z-0) */}
+      <NetworkCanvasWrapper />
+      <div
+        className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.08),transparent_60%)] pointer-events-none"
+        aria-hidden="true"
+      />
+
+      {/* Background Decorative Asymmetric Glows */}
+      <div className="absolute top-0 left-0 w-96 h-96 bg-white/5 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
+      <div
+        className="absolute bottom-0 right-0 w-125 h-125 bg-[radial-gradient(circle_at_bottom_right,rgba(255,236,1,0.06),transparent_70%)] pointer-events-none"
+        aria-hidden="true"
+      />
+
+      <div
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10"
+        role="region"
+        aria-roledescription="carousel"
+        aria-label="Servicios logísticos"
+        onKeyDown={handleCarouselKeyDown}
+        inert={selectedService ? true : undefined}
+      >
+        {/* Editorial Section Header with Viewport Entry */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-50px' }}
+          transition={{ type: 'spring', stiffness: 360, damping: 28 }}
+          className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6 border-b border-white/10 pb-8"
+        >
+          <div>
+            <div className="flex items-center gap-2 text-xs font-mono font-semibold uppercase tracking-[0.24em] text-brand-yellow-400 mb-3">
+              <span>02</span>
+              <span className="text-white/40" aria-hidden="true">/</span>
+              <span>Catálogo Operativo & Tarifas 2026</span>
+            </div>
+            <h2 id="services-overview-title" className="font-display text-3xl sm:text-5xl lg:text-6xl leading-[0.92] tracking-tight uppercase text-white text-balance">
+              Soluciones Logísticas <br />
+              <span className="text-brand-yellow-400">a tu medida</span>
+            </h2>
+          </div>
+
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 sm:gap-4">
+            <motion.button
+              type="button"
+              onClick={() => setIsAutoRotate((prev) => !prev)}
+              aria-pressed={isAutoRotate}
+              whileHover={reduceMotion ? undefined : { scale: 1.02 }}
+              whileTap={reduceMotion ? undefined : { scale: 0.97 }}
+              className={`min-h-11 px-4 sm:px-5 py-2.5 rounded-full text-xs font-bold font-subheading tracking-wider border transition-colors cursor-pointer inline-flex items-center gap-2 justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-yellow-500 ${
+                isAutoRotate
+                  ? 'bg-brand-yellow-400 text-brand-blue-500 border-brand-yellow-400 shadow-[0_4px_16px_rgba(255,236,1,0.3)]'
+                  : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
+              }`}
+            >
+              <span className={`w-2 h-2 rounded-full ${isAutoRotate ? 'bg-brand-blue-500' : 'bg-white/40'}`} aria-hidden="true" />
+              <span>{isAutoRotate ? 'Rotación Automática' : 'Rotación Pausada'}</span>
+            </motion.button>
+
+            <div className="flex items-center gap-2">
+              <motion.button
+                type="button"
+                onClick={handlePrev}
+                whileHover={reduceMotion ? undefined : { scale: 1.04 }}
+                whileTap={reduceMotion ? undefined : { scale: 0.97 }}
+                className="min-w-11 min-h-11 p-3 rounded-full bg-white/10 hover:bg-brand-yellow-500 hover:text-brand-blue-500 border border-white/20 cursor-pointer transition-colors inline-flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-yellow-500"
+                aria-label="Anterior Servicio"
+              >
+                <ChevronLeft className="w-5 h-5" aria-hidden="true" />
+              </motion.button>
+              <motion.button
+                type="button"
+                onClick={handleNext}
+                whileHover={reduceMotion ? undefined : { scale: 1.04 }}
+                whileTap={reduceMotion ? undefined : { scale: 0.97 }}
+                className="min-w-11 min-h-11 p-3 rounded-full bg-white/10 hover:bg-brand-yellow-500 hover:text-brand-blue-500 border border-white/20 cursor-pointer transition-colors inline-flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-yellow-500"
+                aria-label="Siguiente Servicio"
+              >
+                <ChevronRight className="w-5 h-5" aria-hidden="true" />
+              </motion.button>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Mobile Quick Service Selector Pills */}
+        <div className="flex sm:hidden overflow-x-auto gap-2 pb-3 mb-4 no-scrollbar border-b border-white/10">
+          {services.map((s, idx) => (
+            <button
+              key={s.id}
+              type="button"
+              onClick={() => {
+                setActiveIndex(idx);
+                setIsAutoRotate(false);
+              }}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-mono font-bold uppercase tracking-wider whitespace-nowrap shrink-0 transition-colors border ${
+                idx === activeIndex
+                  ? 'bg-brand-yellow-500 text-brand-blue-500 border-brand-yellow-500 shadow-accent-sm'
+                  : 'bg-white/10 text-white/90 border-white/20'
+              }`}
+            >
+              {s.title}
+            </button>
+          ))}
+        </div>
+
+        {/* 3D Tilted Card Carousel Container */}
+        <div
+          ref={carouselRef}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          className="relative h-125 sm:h-135 flex items-center justify-center my-4 sm:my-8 transform-3d max-w-full overflow-visible touch-pan-y select-none"
+        >
+          {services.map((service, index) => {
+            const Icon = service.icon;
+            const transform = getCardTransform(index);
+            const isCenter = transform.isCenter;
+
+            return (
+              <motion.button
+                key={service.id}
+                type="button"
+                tabIndex={isCenter ? 0 : -1}
+                inert={!isCenter && reduceMotion ? true : undefined}
+                aria-hidden={!isCenter && reduceMotion ? 'true' : undefined}
+                aria-label={isCenter ? `Ver ficha técnica de ${service.title}` : `Seleccionar ${service.title}`}
+                onClick={(e) => {
+                  if (isCenter) {
+                    lastTriggerRef.current = e.currentTarget;
+                    setSelectedService(service);
+                  } else {
+                    setActiveIndex(index);
+                    setIsAutoRotate(false);
+                  }
+                }}
+                className={`absolute w-[min(290px,calc(100vw-3rem))] sm:w-87.5 h-110 sm:h-122.5 rounded-3xl cursor-pointer select-none group text-left focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-yellow-500 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-ink ${
+                  !isCenter && reduceMotion ? 'pointer-events-none' : ''
+                }`}
+                style={{
+                  transformStyle: 'preserve-3d',
+                  zIndex: transform.zIndex,
+                  willChange: 'transform, opacity',
+                }}
+                animate={{
+                  rotateY: transform.rotateY,
+                  translateZ: transform.translateZ,
+                  translateX: transform.translateX,
+                  // Los cards laterales no se atenúan: el fade del ancestro (opacity < 1)
+                  // degradaba el contraste de los chips (URGENTE/ECONÓMICO/LOGÍSTICA INTEGRAL)
+                  // por debajo de AA 4.5. La profundidad se mantiene con rotateY/scale/translateZ.
+                  opacity: reduceMotion ? transform.opacity : 1,
+                  scale: transform.scale,
+                }}
+                transition={
+                  reduceMotion
+                    ? { duration: 0.01 }
+                    : springConfigCarousel
+                }
+                whileHover={isCenter && !reduceMotion ? { scale: 1.02, transition: springConfigSnappy } : undefined}
+              >
+                {/* Card Structure with Color Block Themes */}
+                <div
+                  className={`w-full h-full rounded-3xl p-6 flex flex-col justify-between relative overflow-hidden border-2 shadow-xl ${
+                    isCenter ? service.cardStyleCenter : service.cardStyleSide
+                  }`}
+                >
+                  {/* Background Image with Layer Blend */}
+                  <div className="absolute inset-0 w-full h-full pointer-events-none select-none z-0" aria-hidden="true">
+                    <OptimizedImage
+                      src={service.imageUrl}
+                      alt=""
+                      fill={true}
+                      aboveTheFold={false}
+                      sizes="(max-width: 768px) 290px, 350px"
+                      className={`object-cover ${service.imgBlend}`}
+                    />
+                    <div className="absolute inset-0 bg-linear-to-t from-brand-blue-500/80 via-brand-blue-500/20 to-transparent opacity-60" />
+                  </div>
+
+                  {/* Center Card Ambient Glow Overlay */}
+                  {isCenter && (
+                    <motion.div
+                      aria-hidden="true"
+                      className="absolute bottom-0 right-0 w-48 h-48 rounded-full blur-3xl pointer-events-none opacity-20 -mr-12 -mb-12"
+                      style={{
+                        backgroundColor: index === 3 ? 'var(--color-brand-blue-500)' : 'var(--color-brand-yellow-500)',
+                      }}
+                      animate={reduceMotion ? {} : { scale: [1, 1.08, 1], opacity: [0.15, 0.25, 0.15] }}
+                      transition={{ duration: 3, ease: 'easeInOut', repeat: Infinity }}
+                    />
+                  )}
+
+                  {/* Watermark Background Icon */}
+                  <motion.div
+                    aria-hidden="true"
+                    className="absolute right-4 bottom-4 opacity-[0.06] pointer-events-none select-none"
+                    animate={isCenter && !reduceMotion ? { rotate: [0, 2, -2, 0], scale: [1, 1.02, 1] } : {}}
+                    transition={{ duration: 4, ease: 'easeInOut', repeat: Infinity }}
+                  >
+                    <Icon className="w-48 h-48" />
+                  </motion.div>
+
+                  {/* Top Badge Symbol & Serie Badge */}
+                  <div className="relative z-10 flex items-center justify-between">
+                    <motion.div
+                      className="flex items-center gap-2.5"
+                      whileHover={reduceMotion ? undefined : { scale: 1.05, transition: springConfigSnappy }}
+                    >
+                      <div className={`p-3 rounded-xl shadow-md ${service.iconBoxStyle}`} aria-hidden="true">
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <span className={`text-2xs font-bold font-subheading px-2.5 py-1 rounded-full border shadow-sm ${service.badgeStyle}`}>
+                        {service.badge}
+                      </span>
+                    </motion.div>
+                  </div>
+
+                  {/* Middle Service Information */}
+                  <div className="relative z-10 space-y-2 mt-auto">
+                    <div className={`text-xs font-bold uppercase tracking-widest font-subheading flex items-center gap-1 ${service.hintColor}`}>
+                      <MapPin className="w-3.5 h-3.5" aria-hidden="true" />
+                      {service.city}
+                    </div>
+                    <motion.div
+                      className={`font-display text-2xl sm:text-3xl uppercase leading-none text-balance ${service.titleColor}`}
+                      whileHover={reduceMotion ? undefined : { x: 4, transition: springConfigSnappy }}
+                    >
+                      {service.title}
+                    </motion.div>
+                    <p className={`text-xs line-clamp-2 leading-relaxed ${service.descColor}`}>
+                      {service.description}
+                    </p>
+                  </div>
+
+                  {/* Bottom Stats Grid & Callout */}
+                  <div className="relative z-10 pt-4 border-t border-white/5 grid grid-cols-3 gap-2 text-center">
+                    <div className={`p-2 rounded-xl backdrop-blur-sm ${service.statBoxStyle}`}>
+                      <div className="text-sm font-bold font-subheading truncate">{service.stats.time}</div>
+                      <div className={`text-2xs uppercase font-bold tracking-wider ${service.statLabelStyle}`}>ENTREGA</div>
+                    </div>
+                    <div className={`p-2 rounded-xl backdrop-blur-sm ${service.statBoxStyle}`}>
+                      <div className="text-sm font-bold font-subheading truncate">{service.stats.price}</div>
+                      <div className={`text-2xs uppercase font-bold tracking-wider ${service.statLabelStyle}`}>TARIFA</div>
+                    </div>
+                    <div className={`p-2 rounded-xl backdrop-blur-sm ${service.statBoxStyle}`}>
+                      <div className="text-sm font-bold font-subheading truncate">{service.stats.weight}</div>
+                      <div className={`text-2xs uppercase font-bold tracking-wider ${service.statLabelStyle}`}>PESO</div>
+                    </div>
+                  </div>
+
+                  {/* Center Card Click Hint */}
+                  {isCenter && (
+                    <motion.div
+                      className="relative z-10 mt-3 text-center"
+                      animate={reduceMotion ? {} : { opacity: [1, 0.6, 1] }}
+                      transition={{ duration: 2, ease: 'easeInOut', repeat: Infinity }}
+                    >
+                      <span className={`inline-flex items-center gap-1.5 text-xs font-bold font-subheading tracking-wider underline uppercase ${service.hintColor}`}>
+                        <Info className="w-3.5 h-3.5" />
+                        Mirá la Ficha Técnica
+                      </span>
+                    </motion.div>
+                  )}
+                </div>
+              </motion.button>
+            );
+          })}
+        </div>
+
+        {/* Carousel Indicators */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.2 }}
+          className="flex items-center justify-center gap-2 mt-8"
+          role="group"
+          aria-label="Navegación de servicios"
+        >
+          {services.map((service, i) => (
+            <motion.button
+              key={service.id}
+              type="button"
+              onClick={() => {
+                setActiveIndex(i);
+                setIsAutoRotate(false);
+              }}
+              aria-label={`Ir al servicio ${service.title}${i === activeIndex ? ', servicio actual' : ''}`}
+              aria-current={i === activeIndex ? 'true' : 'false'}
+              className="min-w-11 min-h-11 flex items-center justify-center rounded-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-yellow-500"
+              whileHover={i !== activeIndex && !reduceMotion ? { scale: 1.2, transition: springConfigSnappy } : undefined}
+              whileTap={reduceMotion ? undefined : { scale: 0.9 }}
+            >
+              <motion.span
+                className={`h-2.5 rounded-full block ${
+                  i === activeIndex ? 'bg-brand-yellow-500 shadow-cta-glow' : 'bg-white/30 hover:bg-white/60 border border-brand-blue-200'
+                }`}
+                animate={{ width: i === activeIndex ? '2.5rem' : '0.625rem' }}
+                transition={springConfigSnappy}
+              />
+            </motion.button>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* Interactive Modal for Selected Service Details */}
+      <AnimatePresence>
+        {selectedService && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            onClick={closeModal}
+            className="fixed inset-0 z-50 bg-brand-blue-500/80 backdrop-blur-md flex items-center justify-center p-4 overscroll-contain overflow-y-auto"
+          >
+            <motion.div
+              ref={modalRef}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="service-modal-title"
+              onClick={(e) => e.stopPropagation()}
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: 'spring', stiffness: 120, damping: 20 }}
+              className="double-bezel-outer p-2 rounded-3xl bg-brand-blue-50/10 border border-brand-blue-100/20 max-w-2xl w-full"
+            >
+              <div className="double-bezel-inner bg-brand-blue-500 border border-brand-blue-500/20 rounded-2xl p-6 sm:p-8 text-white relative shadow-2xl space-y-6">
+                {/* Close Modal Button */}
+                <motion.button
+                  ref={closeButtonRef}
+                  type="button"
+                  onClick={closeModal}
+                  whileHover={reduceMotion ? undefined : { scale: 1.1, rotate: 90, transition: springConfigSnappy }}
+                  whileTap={reduceMotion ? undefined : { scale: 0.9 }}
+                  className="absolute top-4 right-4 min-w-11 min-h-11 p-2.5 rounded-full bg-white/10 hover:bg-brand-yellow-500 hover:text-brand-blue-500 transition-colors cursor-pointer z-20 inline-flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-yellow-500"
+                  aria-label="Cerrar ficha técnica"
+                >
+                  <X className="w-5 h-5" />
+                </motion.button>
+
+                {/* Modal Header */}
+                <div className="flex items-center gap-4 text-left pr-10">
+                  <div className="p-4 bg-brand-yellow-500 text-brand-blue-500 rounded-2xl shadow-[3px_3px_0px_var(--color-brand-blue-500)]">
+                    {React.createElement(selectedService.icon, { className: "w-8 h-8" })}
+                  </div>
+                  <div>
+                    <span className="text-2xs font-bold text-brand-yellow-500 font-subheading tracking-widest uppercase">
+                      {selectedService.founded} • {selectedService.city}
+                    </span>
+                    <h3 id="service-modal-title" className="font-display text-3xl sm:text-4xl uppercase text-balance mt-0.5">
+                      {selectedService.title}
+                    </h3>
+                  </div>
+                </div>
+
+                {/* Description & Features Box */}
+                <div className="space-y-4 bg-brand-blue-500 p-5 rounded-2xl border border-brand-blue-500/10 text-left">
+                  <p className="text-sm sm:text-base leading-relaxed text-brand-blue-50 font-sans">
+                    {selectedService.details.summary}
+                  </p>
+
+                  <div className="space-y-2 pt-2 border-t border-brand-blue-500/10">
+                    <span className="text-xs font-subheading text-brand-yellow-500 font-bold uppercase tracking-wider block">Beneficios Clave:</span>
+                    {selectedService.details.features.map((feat: string, fIdx: number) => (
+                      <motion.div
+                        key={fIdx}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ type: 'spring', stiffness: 100, damping: 20, delay: fIdx * 0.08 }}
+                        className="flex items-start gap-2 text-xs sm:text-sm text-white"
+                      >
+                        <ShieldCheck className="w-4 h-4 text-brand-yellow-500 shrink-0 mt-0.5" />
+                        <span>{feat}</span>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Statistics Row */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.1 }}
+                  className="grid grid-cols-3 gap-3 text-center"
+                >
+                  <div className="bg-brand-blue-500 border border-brand-blue-500/20 p-3 rounded-xl">
+                    <span className="text-xl font-bold font-subheading text-brand-yellow-500 block truncate">
+                      {selectedService.stats.time}
+                    </span>
+                    <span className="text-2xs text-brand-blue-50 font-bold uppercase tracking-wider">Tiempos</span>
+                  </div>
+                  <div className="bg-brand-blue-500 border border-brand-blue-500/20 p-3 rounded-xl">
+                    <span className="text-xl font-bold font-subheading text-white block truncate">
+                      {selectedService.stats.price}
+                    </span>
+                    <span className="text-2xs text-brand-blue-50 font-bold uppercase tracking-wider">Precio Base</span>
+                  </div>
+                  <div className="bg-brand-blue-500 border border-brand-blue-500/20 p-3 rounded-xl">
+                    <span className="text-xl font-bold font-subheading text-brand-yellow-500 block truncate">
+                      {selectedService.stats.weight}
+                    </span>
+                    <span className="text-2xs text-brand-blue-50 font-bold uppercase tracking-wider">Capacidad</span>
+                  </div>
+                </motion.div>
+
+                {/* Action Footer */}
+                <div className="pt-2 flex justify-between items-center gap-4">
+                  <motion.button
+                    type="button"
+                    onClick={closeModal}
+                    whileHover={reduceMotion ? undefined : { x: -4, transition: springConfigSnappy }}
+                    whileTap={reduceMotion ? undefined : { scale: 0.98 }}
+                    className="min-h-11 px-3 text-xs text-brand-blue-50 hover:text-white underline uppercase font-bold tracking-wider cursor-pointer inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-yellow-500 rounded-lg"
+                  >
+                    Volver Atrás
+                  </motion.button>
+                  <a
+                    href={selectedService.details.ctaHref}
+                    onClick={() =>
+                      trackAnalytics.ctaClick(
+                        `services_modal_${selectedService.id}_cta`,
+                        selectedService.details.ctaText
+                      )
+                    }
+                    className="cta-nested-pill bg-brand-yellow-500 text-brand-blue-500 px-6 py-2.5 text-sm font-subheading font-bold uppercase hover:bg-brand-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-yellow-500 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue-500"
+                  >
+                    <span>{selectedService.details.ctaText}</span>
+                    <span className="cta-nested-icon bg-transparent" aria-hidden="true">→</span>
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </section>
+  );
+}

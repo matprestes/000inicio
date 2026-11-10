@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OptimizedFooter — Envíos DosRuedas</title>
+  
+  <!-- Google Fonts Oficiales -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton+SC&family=Bebas+Neue&family=Geist+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --color-brand-blue-50: #E6EEFE;
+      --color-brand-blue-100: #BACEFD;
+      --color-brand-blue-200: #8EAFFB;
+      --color-brand-blue-300: #628FF9;
+      --color-brand-blue-400: #3570F8;
+      --color-brand-blue-500: #0950F6;
+      --color-brand-blue-600: #073BC2;
+      --color-brand-blue-900: #062F96;
+
+      --color-brand-yellow-50: #FFFDE6;
+      --color-brand-yellow-100: #FFFAB8;
+      --color-brand-yellow-200: #FFF78A;
+      --color-brand-yellow-300: #FFF45C;
+      --color-brand-yellow-400: #FFF12E;
+      --color-brand-yellow-500: #FFEC01;
+      --color-brand-yellow-600: #E6D400;
+
+      --color-white: #FFFFFF;
+      --color-ink: #071536;
+
+      --font-sans: "Outfit", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-display: "Anton SC", "Anton", Impact, sans-serif;
+      --font-subheading: "Bebas Neue", sans-serif;
+      --font-mono: "Geist Mono", monospace;
+
+      --ease-out-ui: cubic-bezier(0.23, 1, 0.32, 1);
+      --duration-feedback: 160ms;
+
+      --shadow-accent-sm: 0 2px 6px rgba(255, 236, 1, 0.18);
+      --shadow-accent-md: 0 4px 14px rgba(255, 236, 1, 0.28);
+      --shadow-cta-glow: 0 0 28px rgba(255, 236, 1, 0.45), 0 8px 24px rgba(9, 80, 246, 0.18);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--color-brand-blue-50);
+      color: var(--color-ink);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    /* ========================================================================
+     * FOOTER PRINCIPAL
+     * ======================================================================== */
+    footer#optimized-footer {
+      background-color: var(--color-brand-blue-500);
+      color: var(--color-white);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    /* Franja Amarilla Superior de 6px (Firma Canónica de Marca) */
+    .footer-yellow-top-bar {
+      height: 6px;
+      background-color: var(--color-brand-yellow-500);
+      width: 100%;
+      box-shadow: 0 2px 12px rgba(255, 236, 1, 0.5);
+    }
+
+    /* Luces radiales de fondo */
+    .ambient-glow-center {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 0%, rgba(255, 236, 1, 0.08), transparent 55%);
+      pointer-events: none;
+    }
+    .ambient-glow-corner {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 10% 90%, rgba(7, 59, 194, 0.6), transparent 45%);
+      pointer-events: none;
+    }
+
+    .footer-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: clamp(2.5rem, 5vw, 4.5rem) clamp(1rem, 3.5vw, 2rem) clamp(1.5rem, 3vw, 2.5rem);
+      position: relative;
+      z-index: 10;
+    }
+
+    /* ========================================================================
+     * 1. TOP CTA BANNER RESPONSIVO
+     * ======================================================================== */
+    .footer-banner-cta {
+      margin-bottom: clamp(2.5rem, 5vw, 4rem);
+      border-radius: 1.25rem;
+      background: linear-gradient(135deg, rgba(9, 80, 246, 0.95) 0%, rgba(7, 59, 194, 0.98) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      padding: clamp(1.25rem, 3.5vw, 2.25rem);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 20px 45px -10px rgba(7, 21, 54, 0.35);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    @media (min-width: 860px) {
+      .footer-banner-cta {
+        flex-direction: row;
+        align-items: center;
+      }
+    }
+
+    .banner-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      text-align: center;
+    }
+    @media (min-width: 860px) {
+      .banner-copy {
+        text-align: left;
+        max-width: 60%;
+      }
+    }
+
+    .banner-badge-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.3rem 0.85rem;
+      border-radius: 9999px;
+      background-color: rgba(255, 236, 1, 0.15);
+      border: 1px solid rgba(255, 236, 1, 0.35);
+      color: var(--color-brand-yellow-500);
+      font-size: 0.75rem;
+      font-family: var(--font-subheading);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      width: fit-content;
+      margin: 0 auto;
+    }
+    @media (min-width: 860px) {
+      .banner-badge-live {
+        margin: 0;
+      }
+    }
+
+    .live-dot {
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 9999px;
+      background-color: var(--color-brand-yellow-500);
+      box-shadow: 0 0 8px var(--color-brand-yellow-500);
+      animation: pulseDot 2s infinite;
+    }
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.3); }
+    }
+
+    .banner-heading {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 3.2vw, 2.1rem);
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+      color: var(--color-white);
+    }
+    .banner-heading span {
+      color: var(--color-brand-yellow-500);
+    }
+
+    .banner-subtext {
+      font-size: clamp(0.85rem, 1.8vw, 0.95rem);
+      color: var(--color-brand-blue-50);
+      font-weight: 300;
+      line-height: 1.5;
+    }
+
+    .banner-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      width: 100%;
+      flex-shrink: 0;
+    }
+    @media (min-width: 520px) {
+      .banner-actions {
+        flex-direction: row;
+        justify-content: center;
+        width: auto;
+      }
+    }
+
+    /* Botón Cotizar (Amarillo con texto azul de alto contraste) */
+    .btn-cotizar-footer {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      background-color: var(--color-brand-yellow-500);
+      color: var(--color-brand-blue-500);
+      font-family: var(--font-subheading);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.92rem;
+      font-weight: 700;
+      padding: 0.75rem 1.4rem;
+      border-radius: 9999px;
+      box-shadow: var(--shadow-accent-sm);
+      text-decoration: none;
+      min-height: 48px;
+      transition: all var(--duration-feedback) var(--ease-out-ui);
+      flex: 1;
+    }
+    @media (min-width: 520px) {
+      .btn-cotizar-footer {
+        flex: initial;
+      }
+    }
+    .btn-cotizar-footer:hover {
+      background-color: var(--color-brand-yellow-400);
+      box-shadow: var(--shadow-cta-glow);
+      transform: translateY(-2px);
+    }
+    .btn-cotizar-icon {
+      width: 1.75rem;
+      height: 1.75rem;
+      border-radius: 9999px;
+      background-color: rgba(9, 80, 246, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease;
+    }
+    .btn-cotizar-footer:hover .btn-cotizar-icon {
+      transform: translateX(2px) translateY(-2px);
+    }
+
+    /* Botón WhatsApp */
+    .btn-whatsapp-footer {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: var(--color-white);
+      font-family: var(--font-subheading);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.92rem;
+      padding: 0.75rem 1.35rem;
+      border-radius: 9999px;
+      text-decoration: none;
+      min-height: 48px;
+      transition: background-color 0.2s, border-color 0.2s, transform 0.2s;
+      flex: 1;
+    }
+    @media (min-width: 520px) {
+      .btn-whatsapp-footer {
+        flex: initial;
+      }
+    }
+    .btn-whatsapp-footer:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-color: var(--color-white);
+      transform: translateY(-2px);
+    }
+    .btn-whatsapp-footer svg {
+      width: 1.15rem;
+      height: 1.15rem;
+      color: var(--color-brand-yellow-500);
+    }
+
+    /* ========================================================================
+     * 2. GRILLA PRINCIPAL DE CONTENIDOS RESPONSIVA
+     * ======================================================================== */
+    .footer-columns-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+    @media (min-width: 680px) and (max-width: 1023px) {
+      .footer-columns-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2.5rem 2rem;
+      }
+      .col-ops {
+        grid-column: span 2;
+      }
+    }
+    @media (min-width: 1024px) {
+      .footer-columns-grid {
+        grid-template-columns: 1.25fr 1.35fr 1.1fr;
+        gap: 3.5rem;
+      }
+    }
+
+    /* --- COLUMNA 1: MARCA, LOGO Y REDES --- */
+    .col-brand {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* Brand Header con LOGO.WEBP */
+    .brand-logo-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.85rem;
+      text-decoration: none;
+      color: var(--color-white);
+      user-select: none;
+      width: fit-content;
+      transition: transform 0.2s var(--ease-out-ui);
+    }
+    .brand-logo-link:hover {
+      transform: translateY(-2px);
+    }
+
+    .brand-logo-img {
+      width: 46px;
+      height: 46px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+      flex-shrink: 0;
+    }
+
+    .brand-title-box {
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+    }
+    .brand-name-footer {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 2.5vw, 1.75rem);
+      text-transform: uppercase;
+      letter-spacing: -0.015em;
+      color: var(--color-white);
+    }
+    .brand-name-footer span {
+      color: var(--color-brand-yellow-500);
+    }
+    .brand-tagline-footer {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--color-brand-yellow-500);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-top: 0.3rem;
+    }
+
+    .brand-bio {
+      color: var(--color-brand-blue-50);
+      font-size: 0.88rem;
+      line-height: 1.6;
+      font-weight: 300;
+      max-width: 32rem;
+    }
+
+    .social-section {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .social-label {
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      color: var(--color-brand-yellow-500);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+    }
+
+    .social-icons-row {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+    }
+
+    .social-btn {
+      width: 2.6rem;
+      height: 2.6rem;
+      border-radius: 0.75rem;
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: var(--color-white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      transition: background-color 0.2s, color 0.2s, transform 0.2s, border-color 0.2s;
+    }
+    .social-btn:hover {
+      background-color: var(--color-brand-yellow-500);
+      color: var(--color-brand-blue-500);
+      border-color: var(--color-brand-yellow-500);
+      transform: translateY(-2px);
+    }
+    .social-btn.whatsapp-highlight {
+      background-color: var(--color-brand-yellow-500);
+      color: var(--color-brand-blue-500);
+      border-color: var(--color-brand-yellow-500);
+    }
+    .social-btn.whatsapp-highlight:hover {
+      background-color: var(--color-brand-yellow-400);
+      transform: translateY(-2px);
+    }
+    .social-btn svg {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+
+    .hub-badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 0.85rem;
+      border-radius: 0.65rem;
+      background-color: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      color: var(--color-white);
+      width: fit-content;
+      margin-top: 0.25rem;
+    }
+    .hub-badge-pill svg {
+      width: 0.95rem;
+      height: 0.95rem;
+      color: var(--color-brand-yellow-500);
+      flex-shrink: 0;
+    }
+
+    /* --- COLUMNA 2: SERVICIOS Y PLATAFORMAS --- */
+    .col-services {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .col-heading {
+      font-family: var(--font-subheading);
+      font-size: 1.2rem;
+      letter-spacing: 0.06em;
+      color: var(--color-brand-yellow-500);
+      text-transform: uppercase;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      padding-bottom: 0.5rem;
+    }
+
+    .services-subgrid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    @media (min-width: 480px) {
+      .services-subgrid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
+      }
+    }
+
+    .service-category-title {
+      font-size: 0.7rem;
+      color: var(--color-brand-yellow-500);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      margin-bottom: 0.65rem;
+    }
+
+    .footer-links-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .footer-link-item a {
+      color: var(--color-brand-blue-50);
+      text-decoration: none;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: color 0.15s, transform 0.15s;
+      line-height: 1.35;
+    }
+    .footer-link-item a:hover {
+      color: var(--color-brand-yellow-500);
+      transform: translateX(3px);
+    }
+    .footer-link-item a svg {
+      width: 0.9rem;
+      height: 0.9rem;
+      color: var(--color-brand-yellow-500);
+      flex-shrink: 0;
+    }
+
+    /* --- COLUMNA 3: BASE DE OPERACIONES MDQ --- */
+    .col-ops {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .ops-cards-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .ops-info-box {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      background-color: rgba(9, 80, 246, 0.6);
+      padding: 0.85rem;
+      border-radius: 0.85rem;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      transition: background-color 0.2s, border-color 0.2s;
+    }
+    .ops-info-box:hover {
+      background-color: rgba(9, 80, 246, 0.85);
+      border-color: rgba(255, 236, 1, 0.3);
+    }
+
+    .ops-icon-container {
+      padding: 0.5rem;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 0.55rem;
+      color: var(--color-brand-yellow-500);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ops-icon-container svg {
+      width: 1.05rem;
+      height: 1.05rem;
+    }
+
+    .ops-title {
+      font-weight: 700;
+      color: var(--color-white);
+      text-transform: uppercase;
+      font-family: var(--font-subheading);
+      letter-spacing: 0.05em;
+      font-size: 0.88rem;
+      line-height: 1.15;
+    }
+    .ops-text {
+      font-size: 0.78rem;
+      color: var(--color-brand-blue-50);
+      margin-top: 0.2rem;
+      line-height: 1.4;
+    }
+    .ops-phone-link {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--color-brand-yellow-500);
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 0.2rem;
+      transition: text-decoration 0.15s;
+    }
+    .ops-phone-link:hover {
+      text-decoration: underline;
+    }
+
+    /* ========================================================================
+     * 3. BOTÓN VOLVER ARRIBA Y DIVISOR
+     * ======================================================================== */
+    .footer-divider-row {
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      margin: clamp(2rem, 4vw, 3rem) 0 clamp(1.5rem, 3vw, 2rem) 0;
+      position: relative;
+    }
+
+    .btn-scroll-top {
+      position: absolute;
+      top: -22px;
+      right: clamp(0.5rem, 3vw, 1.5rem);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background-color: var(--color-brand-yellow-500);
+      color: var(--color-brand-blue-500);
+      border: 2px solid var(--color-brand-yellow-500);
+      box-shadow: var(--shadow-accent-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-scroll-top:hover {
+      background-color: var(--color-brand-yellow-400);
+      box-shadow: var(--shadow-cta-glow);
+      transform: translateY(-4px);
+    }
+    .btn-scroll-top svg {
+      width: 1.25rem;
+      height: 1.25rem;
+      stroke-width: 2.5;
+    }
+
+    /* ========================================================================
+     * 4. BARRA LEGAL Y COPYRIGHT
+     * ======================================================================== */
+    .legal-bar {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: var(--color-brand-blue-50);
+      text-align: center;
+    }
+    @media (min-width: 860px) {
+      .legal-bar {
+        flex-direction: row;
+        text-align: left;
+      }
+    }
+
+    .legal-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: clamp(0.6rem, 1.5vw, 1.2rem);
+    }
+    @media (min-width: 860px) {
+      .legal-links {
+        justify-content: flex-end;
+      }
+    }
+    .legal-links a {
+      color: var(--color-brand-blue-50);
+      text-decoration: none;
+      transition: color 0.15s;
+      white-space: nowrap;
+    }
+    .legal-links a:hover {
+      color: var(--color-brand-yellow-500);
+      text-decoration: underline;
+    }
+
+    /* Focus visible accesible */
+    a:focus-visible,
+    button:focus-visible {
+      outline: 3px solid var(--color-brand-yellow-500);
+      outline-offset: 3px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================================================
+       COMPONENTE: OptimizedFooter (Versión Responsiva con logo.webp)
+       ======================================================================== -->
+  <footer id="optimized-footer">
+    <!-- Franja Amarilla Vial Superior (6px) -->
+    <div class="footer-yellow-top-bar" aria-hidden="true"></div>
+
+    <!-- Atmósfera Radial de Fondo -->
+    <div class="ambient-glow-center" aria-hidden="true"></div>
+    <div class="ambient-glow-corner" aria-hidden="true"></div>
+
+    <div class="footer-container">
+      
+      <!-- 1. TOP CTA BANNER RESPONSIVO -->
+      <div class="footer-banner-cta">
+        <div class="banner-copy">
+          <div class="banner-badge-live">
+            <span class="live-dot" aria-hidden="true"></span>
+            <span>Operaciones Activas Mar del Plata 2026</span>
+          </div>
+          <h3 class="banner-heading">
+            ¿Tenés envíos para hoy? <span>Los entregamos a tiempo.</span>
+          </h3>
+          <p class="banner-subtext">
+            Cotizá online en segundos o coordiná directo con nuestro equipo logístico en Friuli 1972 por WhatsApp.
+          </p>
+        </div>
+
+        <div class="banner-actions">
+          <a href="/cotizar" class="btn-cotizar-footer">
+            <span>Cotizá tu Envío</span>
+            <span class="btn-cotizar-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="7" y1="17" x2="17" y2="7"></line>
+                <polyline points="7 7 17 7 17 17"></polyline>
+              </svg>
+            </span>
+          </a>
+
+          <a href="https://wa.me/5492236025348?text=Hola%20Envios%20DosRuedas,%20quiero%20hacer%20una%20consulta%20de%20envios" target="_blank" rel="noopener noreferrer" class="btn-whatsapp-footer">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"></path>
+            </svg>
+            <span>WhatsApp Directo</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 2. MID SECTION (GRILLA DE 3 COLUMNAS RESPONSIVA) -->
+      <div class="footer-columns-grid">
+        
+        <!-- Columna 1: Marca (con logo.webp) y Redes -->
+        <div class="col-brand">
+          <a href="/" class="brand-logo-link" aria-label="Ir al inicio de Envíos DosRuedas">
+            <img src="../../public/logo.webp" alt="Envíos DosRuedas" class="brand-logo-img" width="46" height="46" />
+            <div class="brand-title-box">
+              <span class="brand-name-footer">Envíos <span>DosRuedas</span></span>
+              <span class="brand-tagline-footer">Flota Propia · Mar del Plata</span>
+            </div>
+          </a>
+
+          <p class="brand-bio">
+            Más de 15 años liderando la mensajería urbana y última milla e-commerce en Mar del Plata. Con base física en Friuli 1972, flota propia y cero tercerización, cuidamos cada paquete como si fuera nuestro.
+          </p>
+
+          <div class="social-section">
+            <span class="social-label">Canales Oficiales</span>
+            <div class="social-icons-row">
+              <a href="/nosotros/nuestras-redes" class="social-btn" title="Instagram" aria-label="Instagram de Envíos DosRuedas">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"></path></svg>
+              </a>
+              <a href="/nosotros/nuestras-redes" class="social-btn" title="Facebook" aria-label="Facebook de Envíos DosRuedas">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"></path></svg>
+              </a>
+              <a href="https://wa.me/5492236025348" target="_blank" rel="noopener noreferrer" class="social-btn whatsapp-highlight" title="WhatsApp" aria-label="WhatsApp Oficial">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"></path></svg>
+              </a>
+            </div>
+            <div class="hub-badge-pill">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path><path d="m9 12 2 2 4-4"></path></svg>
+              <span>Base Central Operativa · Friuli 1972</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Columna 2: Servicios y Plataformas -->
+        <div class="col-services">
+          <h4 class="col-heading">Servicios y Plataformas</h4>
+          
+          <div class="services-subgrid">
+            <div>
+              <p class="service-category-title">Plataformas y Portales</p>
+              <ul class="footer-links-list">
+                <li class="footer-link-item">
+                  <a href="/cotizar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                    <span>Cotizá Express / LowCost</span>
+                  </a>
+                </li>
+                <li class="footer-link-item">
+                  <a href="/logistica-dosruedas">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                    <span>Logística DosRuedas</span>
+                  </a>
+                </li>
+                <li class="footer-link-item">
+                  <a href="/mardelivery">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 2-2.3 2.3a3 3 0 0 0 0 4.2l1.8 1.8a3 3 0 0 0 4.2 0L22 8Z"></path></svg>
+                    <span>MarDelivery Gastronomía</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <p class="service-category-title">Planes Logísticos</p>
+              <ul class="footer-links-list">
+                <li class="footer-link-item"><a href="/servicios/envios-express">Envíos Express (< 90 min)</a></li>
+                <li class="footer-link-item"><a href="/servicios/envios-lowcost">Envíos LowCost</a></li>
+                <li class="footer-link-item"><a href="/servicios/enviosflex">Mercado Envíos Flex</a></li>
+                <li class="footer-link-item"><a href="/servicios/empresas-cuenta-corriente">Cuenta Corriente Flexible</a></li>
+                <li class="footer-link-item"><a href="/servicios/deposito-fulfillment">E-commerce Same Day</a></li>
+                <li class="footer-link-item"><a href="/servicios" style="color: var(--color-brand-yellow-500); font-weight: 700;">Ver todos los servicios →</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Columna 3: Base de Operaciones MDQ -->
+        <div class="col-ops">
+          <h4 class="col-heading">Base de Operaciones MDQ</h4>
+
+          <div class="ops-cards-stack">
+            
+            <!-- Ubicación -->
+            <div class="ops-info-box">
+              <div class="ops-icon-container" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              </div>
+              <div>
+                <p class="ops-title">Centro de Distribución</p>
+                <p class="ops-text">Friuli 1972, Mar del Plata, Buenos Aires</p>
+              </div>
+            </div>
+
+            <!-- Teléfono y WhatsApp -->
+            <div class="ops-info-box">
+              <div class="ops-icon-container" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              </div>
+              <div>
+                <p class="ops-title">Línea Directa y WhatsApp</p>
+                <a href="tel:+5492236025348" class="ops-phone-link">223 602-5348</a>
+              </div>
+            </div>
+
+            <!-- Horarios -->
+            <div class="ops-info-box">
+              <div class="ops-icon-container" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              </div>
+              <div>
+                <p class="ops-title">Horarios de Despacho</p>
+                <p class="ops-text">Lunes a Viernes: 08:00 a 18:00 hs</p>
+                <p class="ops-text">Sábados: 08:00 a 13:00 hs · Guardia activa</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 3. BOTÓN VOLVER ARRIBA Y DIVISOR -->
+      <div class="footer-divider-row">
+        <button type="button" class="btn-scroll-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="Volver arriba en la página">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="18 15 12 9 6 15"></polyline>
+          </svg>
+        </button>
+      </div>
+
+      <!-- 4. BARRA LEGAL Y COPYRIGHT RESPONSIVA -->
+      <div class="legal-bar">
+        <p>© 2026 Envíos DosRuedas · Todos los derechos reservados · Mar del Plata, Argentina.</p>
+        <nav class="legal-links" aria-label="Enlaces legales y secundarios">
+          <a href="/servicios">Servicios</a>
+          <a href="/cobertura">Cobertura</a>
+          <a href="/logistica-dosruedas">Logística DosRuedas</a>
+          <a href="/mardelivery">MarDelivery</a>
+          <a href="/nosotros">Nosotros</a>
+          <a href="/terminos-y-condiciones">Términos y Condiciones</a>
+          <a href="/politica-de-privacidad">Privacidad</a>
+        </nav>
+      </div>
+
+    </div>
+  </footer>
+
+</body>
+</html>

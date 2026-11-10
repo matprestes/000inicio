@@ -1,0 +1,797 @@
+<!doctype html>
+<html lang="es-AR" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0950F6" />
+  <title>Navegador Modular — Envíos DosRuedas</title>
+
+  <!-- Google Fonts Oficiales: Outfit, Anton, Bebas Neue, Geist Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Geist+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    /* ========================================================================
+     * VARIABLES Y TOKENS (SISTEMA DE DISEÑO HERO_PARA_ADAPTAR + DOSRUEDAS)
+     * ======================================================================== */
+    :root {
+      color-scheme: light;
+      --blue: #0950f6;
+      --blue-deep: #073bc2;
+      --blue-darker: #062f96;
+      --blue-surface: #e6eefe;
+      --yellow: #ffec01;
+      --yellow-soft: #fff45c;
+      --white: #ffffff;
+      --ink: #071536;
+      --muted: rgba(255, 255, 255, 0.84);
+      --border-subtle: rgba(255, 255, 255, 0.22);
+
+      --font-display: "Anton", Impact, sans-serif;
+      --font-subhead: "Bebas Neue", Impact, sans-serif;
+      --font-body: "Outfit", Arial, sans-serif;
+      --font-mono: "Geist Mono", monospace;
+
+      --pad: clamp(16px, 4vw, 56px);
+      --header-h: 82px;
+      --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+      --shadow-dropdown: 0 20px 48px -8px rgba(7, 21, 54, 0.45);
+      --shadow-cta: 0 8px 24px rgba(255, 236, 1, 0.32);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--blue);
+      color: var(--white);
+      font-family: var(--font-body);
+      min-height: 140vh;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font: inherit;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: inherit;
+    }
+
+    /* ========================================================================
+     * COMPONENTE: SITE-HEADER
+     * ======================================================================== */
+    .site-header {
+      position: sticky;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      min-height: var(--header-h);
+      padding: 12px var(--pad);
+      background: rgba(9, 80, 246, 0.94);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border-subtle);
+      transition: background 0.28s ease, min-height 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+    }
+
+    .site-header.scrolled {
+      background: rgba(7, 59, 194, 0.98);
+      min-height: 70px;
+      box-shadow: 0 12px 36px rgba(7, 21, 54, 0.28);
+      border-bottom-color: rgba(255, 255, 255, 0.14);
+    }
+
+    /* --- BRAND / LOGO CON LOGO.WEBP --- */
+    .brand {
+      display: inline-flex;
+      flex: 0 0 auto;
+      align-items: center;
+      gap: 12px;
+      color: var(--white);
+      text-decoration: none;
+      user-select: none;
+    }
+
+    .brand-logo-img {
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
+      transition: transform 0.2s var(--ease-out);
+    }
+
+    .brand:hover .brand-logo-img {
+      transform: scale(1.05);
+    }
+
+    .brand-name {
+      display: block;
+      font: 22px/0.92 var(--font-display);
+      letter-spacing: -0.015em;
+      text-transform: uppercase;
+    }
+
+    .brand-name small {
+      display: block;
+      margin-top: 5px;
+      color: var(--yellow);
+      font: 9px/1.2 var(--font-mono);
+      letter-spacing: 0.12em;
+      font-weight: 600;
+    }
+
+    /* --- NAVEGACIÓN PRINCIPAL (DESKTOP) --- */
+    .primary-nav {
+      display: flex;
+      align-items: center;
+      gap: clamp(14px, 2vw, 28px);
+    }
+
+    @media (max-width: 1080px) {
+      .primary-nav {
+        display: none;
+      }
+    }
+
+    .nav-item {
+      position: relative;
+    }
+
+    .nav-link,
+    .dropdown-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      color: rgba(255, 255, 255, 0.92);
+      font: 16px/1 var(--font-subhead);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 160ms ease, background 160ms ease;
+    }
+
+    .nav-link:hover,
+    .dropdown-trigger:hover,
+    .nav-item:focus-within>.dropdown-trigger {
+      color: var(--yellow);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .chevron-icon {
+      width: 14px;
+      height: 14px;
+      transition: transform 0.2s var(--ease-out);
+      stroke-width: 2.5;
+    }
+
+    .nav-item:hover .chevron-icon,
+    .nav-item:focus-within .chevron-icon,
+    .dropdown-trigger[aria-expanded="true"] .chevron-icon {
+      transform: rotate(180deg);
+    }
+
+    /* --- MENÚS DESPLEGABLES (DROPDOWNS) --- */
+    .dropdown-menu {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      min-width: 250px;
+      background: var(--blue-deep);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 14px;
+      padding: 8px;
+      box-shadow: var(--shadow-dropdown);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(8px);
+      transition: opacity 0.2s var(--ease-out), transform 0.2s var(--ease-out), visibility 0.2s;
+      z-index: 100;
+    }
+
+    .nav-item:hover .dropdown-menu,
+    .nav-item:focus-within .dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: var(--white);
+      font: 14px var(--font-body);
+      font-weight: 500;
+      transition: background 150ms ease, color 150ms ease, transform 150ms ease;
+    }
+
+    .dropdown-link:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: var(--yellow);
+      transform: translateX(3px);
+    }
+
+    .dropdown-icon-pill {
+      width: 28px;
+      height: 28px;
+      flex: 0 0 28px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--yellow);
+    }
+
+    .dropdown-link:hover .dropdown-icon-pill {
+      background: var(--yellow);
+      color: var(--blue);
+    }
+
+    .dropdown-icon-pill svg {
+      width: 15px;
+      height: 15px;
+    }
+
+    /* --- ACCIONES DERECHA (TELÉFONO + CTA + TOGGLE MÓVIL) --- */
+    .header-actions {
+      display: flex;
+      flex: 0 0 auto;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .header-phone {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      color: var(--white);
+      font: 14px/1 var(--font-mono);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.06);
+      transition: all 180ms ease;
+    }
+
+    @media (min-width: 1240px) {
+      .header-phone {
+        display: inline-flex;
+      }
+    }
+
+    .header-phone:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: var(--yellow);
+      color: var(--yellow);
+    }
+
+    .header-phone svg {
+      width: 15px;
+      height: 15px;
+      color: var(--yellow);
+    }
+
+    /* Botón CTA con disco y flecha (firma visual canónica) */
+    .header-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      min-height: 48px;
+      padding: 0 8px 0 18px;
+      border: 1px solid var(--yellow);
+      border-radius: 999px;
+      background: var(--yellow);
+      color: var(--blue);
+      font: 17px/1 var(--font-subhead);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      box-shadow: var(--shadow-cta);
+      transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
+    }
+
+    .header-cta:hover {
+      transform: translateY(-2px);
+      background: var(--yellow-soft);
+      box-shadow: 0 10px 28px rgba(255, 236, 1, 0.45);
+    }
+
+    .arrow-disc {
+      display: grid;
+      width: 32px;
+      height: 32px;
+      flex: 0 0 32px;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--blue);
+      color: var(--yellow);
+      transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+
+    .header-cta:hover .arrow-disc {
+      transform: rotate(-45deg);
+      background: var(--ink);
+    }
+
+    .arrow-disc svg {
+      width: 16px;
+      height: 16px;
+      stroke-width: 2.5;
+    }
+
+    /* Botón menú hamburguesa móvil */
+    .menu-toggle {
+      display: none;
+      width: 44px;
+      height: 44px;
+      padding: 9px;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--white);
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    @media (max-width: 1080px) {
+      .menu-toggle {
+        display: inline-flex;
+      }
+    }
+
+    .menu-toggle:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: var(--yellow);
+      color: var(--yellow);
+    }
+
+    .menu-toggle svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    /* --- MOBILE DRAWER / NAVEGACIÓN MÓVIL DESLIZANTE --- */
+    .mobile-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      background: rgba(7, 21, 54, 0.75);
+      backdrop-filter: blur(8px);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.28s ease, visibility 0.28s;
+    }
+
+    .mobile-overlay.is-active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .mobile-drawer-box {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 86%;
+      max-width: 360px;
+      background: var(--blue-deep);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      overflow-y: auto;
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: -12px 0 40px rgba(0, 0, 0, 0.45);
+      border-left: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .mobile-overlay.is-active .mobile-drawer-box {
+      transform: translateX(0);
+    }
+
+    .drawer-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      padding-bottom: 16px;
+    }
+
+    .drawer-close-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: var(--white);
+    }
+
+    .drawer-close-btn:hover {
+      background: var(--yellow);
+      color: var(--blue);
+    }
+
+    .mobile-nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .mobile-nav-heading {
+      font: 12px var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--yellow);
+      margin-top: 14px;
+      margin-bottom: 4px;
+      padding-left: 8px;
+    }
+
+    .mobile-nav-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 14px;
+      border-radius: 10px;
+      font: 16px var(--font-subhead);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--white);
+      transition: background 150ms, color 150ms;
+    }
+
+    .mobile-nav-link:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: var(--yellow);
+    }
+
+    .mobile-footer-box {
+      margin-top: auto;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Focus visible accesible */
+    a:focus-visible,
+    button:focus-visible {
+      outline: 3px solid var(--yellow);
+      outline-offset: 3px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ========================================================================
+   * COMPONENTE SITE-HEADER MODULAR
+   * ======================================================================== -->
+  <header class="site-header" id="site-header">
+
+    <!-- BRAND LOGO (logo.webp) + TEXTO TIPOGRÁFICO -->
+    <a class="brand" href="/" aria-label="Envíos DosRuedas, inicio">
+      <img src="../../public/logo.webp" alt="Envíos DosRuedas" class="brand-logo-img" width="44" height="44" />
+      <span class="brand-name">
+        ENVÍOS DOSRUEDAS
+        <small>MENSAJERÍA · LOGÍSTICA MDP</small>
+      </span>
+    </a>
+
+    <!-- NAVEGACIÓN PRINCIPAL (ENLACES DE OPTIMIZED-HEADER) -->
+    <nav class="primary-nav" id="primary-nav" aria-label="Navegación principal">
+
+      <!-- Inicio -->
+      <div class="nav-item">
+        <a href="/" class="nav-link" aria-current="page">Inicio</a>
+      </div>
+
+      <!-- Dropdown: Servicios -->
+      <div class="nav-item">
+        <button type="button" class="dropdown-trigger" aria-haspopup="true" aria-expanded="false">
+          <span>Servicios</span>
+          <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"
+            stroke-linejoin="round" aria-hidden="true">
+            <path d="m6 9 6 6 6-6"></path>
+          </svg>
+        </button>
+        <div class="dropdown-menu" role="menu">
+          <a href="/servicios/envios-express" class="dropdown-link" role="menuitem">
+            <div class="dropdown-icon-pill">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+            </div>
+            <span>Envíos Express (< 90 min)</span>
+          </a>
+          <a href="/servicios/envios-lowcost" class="dropdown-link" role="menuitem">
+            <div class="dropdown-icon-pill">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
+                <polyline points="17 18 23 18 23 12"></polyline>
+              </svg>
+            </div>
+            <span>Envíos LowCost</span>
+          </a>
+          <a href="/servicios/enviosflex" class="dropdown-link" role="menuitem">
+            <div class="dropdown-icon-pill">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </div>
+            <span>Envíos Flex (MeLi)</span>
+          </a>
+          <a href="/servicios/empresas-cuenta-corriente" class="dropdown-link" role="menuitem">
+            <div class="dropdown-icon-pill">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"></path>
+              </svg>
+            </div>
+            <span>Cuenta Corriente Flexible</span>
+          </a>
+          <a href="/servicios#ecommerce-24hs" class="dropdown-link" role="menuitem">
+            <div class="dropdown-icon-pill">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="m7.5 4.27 9 5.15"></path>
+                <path
+                  d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z">
+                </path>
+              </svg>
+            </div>
+            <span>E-commerce 24HS</span>
+          </a>
+          <a href="/servicios/deposito-fulfillment" class="dropdown-link" role="menuitem">
+            <div class="dropdown-icon-pill">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"></path>
+                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+              </svg>
+            </div>
+            <span>Depósito & Fulfillment</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Dropdown: Plataformas -->
+      <div class="nav-item">
+        <button type="button" class="dropdown-trigger" aria-haspopup="true" aria-expanded="false">
+          <span>Plataformas</span>
+          <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"
+            stroke-linejoin="round" aria-hidden="true">
+            <path d="m6 9 6 6 6-6"></path>
+          </svg>
+        </button>
+        <div class="dropdown-menu" role="menu">
+          <a href="/logistica-dosruedas" class="dropdown-link" role="menuitem">
+            <div class="dropdown-icon-pill">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.3-4.3"></path>
+              </svg>
+            </div>
+            <span>Logística DosRuedas</span>
+          </a>
+          <a href="/mardelivery" class="dropdown-link" role="menuitem">
+            <div class="dropdown-icon-pill">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="m16 2-2.3 2.3a3 3 0 0 0 0 4.2l1.8 1.8a3 3 0 0 0 4.2 0L22 8Z"></path>
+                <path d="M15 15 3.3 3.3a4.2 4.2 0 0 0 0 6l7.3 7.3c.7.7 2 .7 2.8 0L15 15Zm0 0 7 7"></path>
+              </svg>
+            </div>
+            <span>MarDelivery Gastronomía</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Dropdown: Nosotros -->
+      <div class="nav-item">
+        <button type="button" class="dropdown-trigger" aria-haspopup="true" aria-expanded="false">
+          <span>Nosotros</span>
+          <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"
+            stroke-linejoin="round" aria-hidden="true">
+            <path d="m6 9 6 6 6-6"></path>
+          </svg>
+        </button>
+        <div class="dropdown-menu" role="menu">
+          <a href="/nosotros/sobre-nosotros" class="dropdown-link" role="menuitem">
+            <div class="dropdown-icon-pill">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 16v-4"></path>
+                <path d="M12 8h.01"></path>
+              </svg>
+            </div>
+            <span>Sobre Nosotros</span>
+          </a>
+          <a href="/nosotros/preguntas-frecuentes" class="dropdown-link" role="menuitem">
+            <div class="dropdown-icon-pill">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <path d="M12 17h.01"></path>
+              </svg>
+            </div>
+            <span>Preguntas Frecuentes</span>
+          </a>
+          <a href="/nosotros/nuestras-redes" class="dropdown-link" role="menuitem">
+            <div class="dropdown-icon-pill">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <circle cx="18" cy="5" r="3"></circle>
+                <circle cx="6" cy="12" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+              </svg>
+            </div>
+            <span>Nuestras Redes</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Contacto Directo -->
+      <div class="nav-item">
+        <a href="/contacto" class="nav-link">Contacto</a>
+      </div>
+
+    </nav>
+
+    <!-- HEADER ACTIONS (TELÉFONO + BOTÓN COTIZAR + TOGGLE HAMBURGUESA) -->
+    <div class="header-actions">
+
+      <!-- Teléfono directo -->
+      <a class="header-phone" href="tel:+5492236025348" aria-label="Llamar al 223 602-5348">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true">
+          <path
+            d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+          </path>
+        </svg>
+        <span>223 602-5348</span>
+      </a>
+
+      <!-- Botón CTA con Arrow-Disc -->
+      <a class="header-cta" href="/contacto">
+        <span>Cotizá tu envío</span>
+        <span class="arrow-disc" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </span>
+      </a>
+
+      <!-- Botón Menú Móvil -->
+      <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Abrir menú" aria-controls="mobile-nav"
+        aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+          aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16" />
+        </svg>
+      </button>
+
+    </div>
+
+  </header>
+
+  <!-- ========================================================================
+   * DRAWER MÓVIL RESPONSIVO
+   * ======================================================================== -->
+  <div class="mobile-overlay" id="mobile-overlay">
+    <div class="mobile-drawer-box" id="mobile-nav" role="dialog" aria-label="Navegación móvil">
+
+      <div class="drawer-top-bar">
+        <span style="font: 20px var(--font-display); text-transform: uppercase;">MENÚ PRINCIPAL</span>
+        <button class="drawer-close-btn" id="drawer-close-btn" aria-label="Cerrar menú">✕</button>
+      </div>
+
+      <nav class="mobile-nav-list">
+        <a href="/" class="mobile-nav-link">Inicio</a>
+
+        <div class="mobile-nav-heading">Servicios</div>
+        <a href="/servicios/envios-express" class="mobile-nav-link">Envíos Express</a>
+        <a href="/servicios/envios-lowcost" class="mobile-nav-link">Envíos LowCost</a>
+        <a href="/servicios/enviosflex" class="mobile-nav-link">Envíos Flex (MeLi)</a>
+        <a href="/servicios/empresas-cuenta-corriente" class="mobile-nav-link">Cuenta Corriente</a>
+        <a href="/servicios/deposito-fulfillment" class="mobile-nav-link">Depósito & Fulfillment</a>
+
+        <div class="mobile-nav-heading">Plataformas</div>
+        <a href="/logistica-dosruedas" class="mobile-nav-link">Logística DosRuedas</a>
+        <a href="/mardelivery" class="mobile-nav-link">MarDelivery Gastronomía</a>
+
+        <div class="mobile-nav-heading">Institucional</div>
+        <a href="/nosotros/sobre-nosotros" class="mobile-nav-link">Sobre Nosotros</a>
+        <a href="/nosotros/preguntas-frecuentes" class="mobile-nav-link">Preguntas Frecuentes</a>
+        <a href="/nosotros/nuestras-redes" class="mobile-nav-link">Nuestras Redes</a>
+        <a href="/contacto" class="mobile-nav-link">Contacto</a>
+      </nav>
+
+      <div class="mobile-footer-box">
+        <a href="tel:+5492236025348"
+          style="font: 14px var(--font-mono); color: var(--yellow); text-decoration: none; font-weight: 700;">
+          📞 223 602-5348
+        </a>
+        <span style="font-size: 12px; color: var(--muted);">Friuli 1972 · Mar del Plata</span>
+      </div>
+
+    </div>
+  </div>
+  <!-- ========================================================================
+   * SCRIPT INTERACTIVO: SCROLL DETECT + MOBILE DRAWER + ACCESIBILIDAD
+   * ======================================================================== -->
+  <script>
+    (function () {
+      "use strict";
+
+      // 1. Detección de Scroll para compactar el Header
+      const header = document.getElementById("site-header");
+      window.addEventListener("scroll", () => {
+        if (window.scrollY > 25) {
+          header.classList.add("scrolled");
+        } else {
+          header.classList.remove("scrolled");
+        }
+      }, { passive: true });
+
+      // 2. Control de Cajón Móvil y Accesibilidad
+      const menuToggle = document.getElementById("menu-toggle");
+      const mobileOverlay = document.getElementById("mobile-overlay");
+      const drawerCloseBtn = document.getElementById("drawer-close-btn");
+
+      function toggleMobileDrawer(isOpen) {
+        menuToggle.setAttribute("aria-expanded", String(isOpen));
+        mobileOverlay.classList.toggle("is-active", isOpen);
+        document.body.style.overflow = isOpen ? "hidden" : "";
+      }
+
+      menuToggle?.addEventListener("click", () => toggleMobileDrawer(true));
+      drawerCloseBtn?.addEventListener("click", () => toggleMobileDrawer(false));
+      mobileOverlay?.addEventListener("click", (e) => {
+        if (e.target === mobileOverlay) toggleMobileDrawer(false);
+      });
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && mobileOverlay.classList.contains("is-active")) {
+          toggleMobileDrawer(false);
+        }
+      });
+      mobileOverlay?.querySelectorAll("a").forEach(a => {
+        a.addEventListener("click", () => toggleMobileDrawer(false));
+      });
+    })();
+  </script>
+
+</body>
+
+</html>

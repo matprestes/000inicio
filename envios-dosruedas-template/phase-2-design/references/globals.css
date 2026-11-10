@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+:root {
+  --surface-page: #FFFFFF;
+  --text-body: #0950F6;
+}
+
+@theme {
+  --color-brand-blue-50: #E6EEFE;
+  --color-brand-blue-100: #BACEFD;
+  --color-brand-blue-200: #8EAFFB;
+  --color-brand-blue-300: #628FF9;
+  --color-brand-blue-400: #3570F8;
+  --color-brand-blue-500: #0950F6;
+
+  --color-brand-yellow-50: #FFFDE6;
+  --color-brand-yellow-400: #FFF12E;
+  --color-brand-yellow-500: #FFEC01;
+  --color-brand-yellow-600: #E6D400;
+
+  --color-white: #FFFFFF;
+
+  --font-sans: "Outfit", sans-serif;
+  --font-display: "Anton", sans-serif;
+  --font-subheading: "Bebas Neue", sans-serif;
+  --font-mono: "Geist Mono", monospace;
+}
+
+@utility double-bezel-outer {
+  background-color: color-mix(in srgb, var(--color-brand-blue-50) 80%, transparent);
+  border: 1px solid var(--color-brand-blue-100);
+  padding: 0.5rem;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 25px 50px -12px rgba(9, 80, 246, 0.15);
+}
