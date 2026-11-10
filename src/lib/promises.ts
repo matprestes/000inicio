@@ -65,7 +65,7 @@ export const CONSULT_THRESHOLD_KM = 20; // Hasta 20 km cálculo automático; > 2
 // Existió una constante `MAX_WEIGHT_KG = 15` que ningún fuente del dueño respalda:
 // el 15 kg venía solo del `.docx`, siempre como pregunta sin respuesta registrada
 // o como aserción del propio `.docx` — la misma clase de número viejo que el
-// dueño ya corrigió ahí ("60-90 min: ESTO ES FALSO"). Lo que el dueño sí
+// dueño ya corrigió ahí ("ESTO ES FALSO"). Lo que el dueño sí
 // respondió, textual, fue "todo lo que pueda ser llevado en moto" (CSV pregunta
 // 4), sin cifra. Publicar un techo inventado además rompía el recargo por bulto
 // extra: si el máximo fuera 5 kg, "más de 5 kg suma $1.800" sería imposible.
